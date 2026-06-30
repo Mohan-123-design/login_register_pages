@@ -122,7 +122,7 @@ function Register() {
       successBox.textContent = 'Registration successful! Redirecting to login...';
       setTimeout(function () {
         window.location.href = '/login';
-      }, 2000);
+      }, 1000);
     }
   }
 

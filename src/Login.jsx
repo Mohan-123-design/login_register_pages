@@ -2,6 +2,51 @@ import react from 'react';
 import './Login.css';
 
 function Login() {
+
+  function handleLogin(e) {
+    e.preventDefault();
+    var email = document.getElementById('email-input').value;
+    var password = document.getElementById('password-input').value;
+    var errorBox = document.getElementById('login-error-message');
+    var successBox = document.getElementById('login-success-message');
+    errorBox.style.display = 'none';
+    successBox.style.display = 'none';
+    var isValid = true;
+    if (email.trim() === '') {
+      errorBox.textContent = 'Please enter your email address';
+      errorBox.style.display = 'block';
+      isValid = false;
+    }
+    if (isValid && password === '') {
+      errorBox.textContent = 'Please enter your password';
+      errorBox.style.display = 'block';
+      isValid = false;
+    }
+    if (isValid) {
+      var loginData = {
+        email: email,
+        password: password
+      };
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginData)
+      })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.success) {
+          successBox.textContent = 'Login successful!';
+          successBox.style.display = 'block';
+        } else {
+          errorBox.textContent = 'Email id or password is incorrect';
+          errorBox.style.display = 'block';
+        }
+      });
+    }
+  }
+
   return (
     <div className="login-page">
       <div className="left-section">
@@ -32,7 +77,9 @@ function Login() {
         <div className="login-card">
           <h2 className="welcome-heading">Welcome Back</h2>
           <p className="subtitle-text">Please enter your details to sign in</p>
-          <form>
+          <div id="login-error-message" className="login-error-box" style={{ display: 'none' }}></div>
+          <div id="login-success-message" className="login-success-box" style={{ display: 'none' }}></div>
+          <form onSubmit={handleLogin}>
             <div className="form-group">
               <label htmlFor="email-input">Email Address</label>
               <input
@@ -56,7 +103,7 @@ function Login() {
                 />
                 <span>Remember Me</span>
               </label>
-              <a href="#" className="forgot-link">Forgot Password?</a>
+              <a href="/forgot-password" className="forgot-link">Forgot Password?</a>
             </div>
             <button type="submit" className="login-button">Login</button>
           </form>
@@ -70,3 +117,4 @@ function Login() {
 }
 
 export default Login;
+

@@ -118,11 +118,32 @@ function Register() {
       isValid = false;
     }
     if (isValid) {
-      successBox.style.display = 'block';
-      successBox.textContent = 'Registration successful! Redirecting to login...';
-      setTimeout(function () {
-        window.location.href = '/login';
-      }, 1000);
+      var userData = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password
+      };
+      fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.success) {
+          successBox.style.display = 'block';
+          successBox.textContent = 'Registration successful! Redirecting to login...';
+          setTimeout(function () {
+            window.location.href = '/login';
+          }, 1000);
+        } else {
+          emailError.textContent = data.message;
+          emailError.style.display = 'block';
+        }
+      });
     }
   }
 
@@ -205,9 +226,9 @@ function Register() {
 
       <div className="register-left-section">
         <p className="register-app-title"><center>AI Education</center></p>
-        <h1 className="register-main-heading"><center>Join Our Learning Platform</center></h1>
+        <h1 className="register-main-heading"><center>Empowering Minds with AI Education</center></h1>
         <p className="register-description-text"><center>
-          Create your account and start your journey with AI Education. Get access to smart learning tools, track your progress, and learn with AI assistance.
+          AI Education is a emerging technological field that helps to give the knowledge of AI to study and gain skills of new things in current technological world. We have to adapt and obtain these things to our lives to be successful in the future.
         </center></p>
         <ul className="register-features-list">
           <li className="register-feature-item">

@@ -32,6 +32,9 @@ function ForgotPassword() {
         body: JSON.stringify({ email: email })
       })
         .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
           return response.json();
         })
         .then(function (data) {
@@ -43,6 +46,10 @@ function ForgotPassword() {
             emailError.textContent = 'This email is not registered';
             emailError.style.display = 'block';
           }
+        })
+        .catch(function (error) {
+          emailError.textContent = 'Server or network error. Is the backend running?';
+          emailError.style.display = 'block';
         });
     }
   }
@@ -84,6 +91,9 @@ function ForgotPassword() {
         body: JSON.stringify({ email: email, newPassword: newPassword })
       })
         .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
           return response.json();
         })
         .then(function (data) {
@@ -94,6 +104,10 @@ function ForgotPassword() {
               window.location.href = '/login';
             }, 1500);
           }
+        })
+        .catch(function (error) {
+          newPassError.textContent = 'Server or network error. Is the backend running?';
+          newPassError.style.display = 'block';
         });
     }
   }

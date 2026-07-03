@@ -32,18 +32,28 @@ function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginData)
       })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
-        if (data.success) {
-          successBox.textContent = 'Login successful!';
-          successBox.style.display = 'block';
-        } else {
-          errorBox.textContent = 'Email id or password is incorrect';
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.success) {
+            successBox.textContent = 'Login successful! Redirecting to classroom...';
+            successBox.style.display = 'block';
+            setTimeout(function () {
+              window.location.href = '/classroom';
+            }, 800);
+          } else {
+            errorBox.textContent = 'Email id or password is incorrect';
+            errorBox.style.display = 'block';
+          }
+        })
+        .catch(function (error) {
+          errorBox.textContent = 'Server or network error. Is the backend running?';
           errorBox.style.display = 'block';
-        }
-      });
+        });
     }
   }
 

@@ -427,7 +427,7 @@ function Whiteboard(props) {
             onClick={togglePenDropdown}
             title={getBrushDisplayName()}
           >
-            ✏️ ▾
+            🖊️ ▾
           </button>
           {showPenDropdown && (
             <div className="dropdown-menu">

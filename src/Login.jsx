@@ -40,10 +40,10 @@ function Login() {
         })
         .then(function (data) {
           if (data.success) {
-            successBox.textContent = 'Login successful! Redirecting to classroom...';
+            successBox.textContent = 'Login successful!...';
             successBox.style.display = 'block';
             setTimeout(function () {
-              window.location.href = '/classroom';
+              window.location.href = '/dashboard';
             }, 800);
           } else {
             errorBox.textContent = 'Email id or password is incorrect';
@@ -54,6 +54,18 @@ function Login() {
           errorBox.textContent = 'Server or network error. Is the backend running?';
           errorBox.style.display = 'block';
         });
+    }
+  }
+
+  function togglePassword() {
+    var passInput = document.getElementById('password-input');
+    var btn = document.getElementById('toggle-pass-btn');
+    if (passInput.type === 'password') {
+      passInput.type = 'text';
+      btn.textContent = '🔒';
+    } else {
+      passInput.type = 'password';
+      btn.textContent = '👀';
     }
   }
 
@@ -100,11 +112,14 @@ function Login() {
             </div>
             <div className="form-group">
               <label htmlFor="password-input">Password</label>
-              <input
-                type="password"
-                id="password-input"
-                placeholder="Enter your password"
-              />
+              <div className="password-wrapper">
+                <input
+                  type="password"
+                  id="password-input"
+                  placeholder="Enter your password"
+                />
+                <button type="button" id="toggle-pass-btn" onClick={togglePassword} className="toggle-password-btn">🔒</button>
+              </div>
             </div>
             <div className="options-row">
               <label className="remember-me">

@@ -129,28 +129,28 @@ function Register() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
       })
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(function (data) {
-        if (data.success) {
-          successBox.style.display = 'block';
-          successBox.textContent = 'Registration successful! Redirecting to login...';
-          setTimeout(function () {
-            window.location.href = '/login';
-          }, 1000);
-        } else {
-          emailError.textContent = data.message;
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.success) {
+            successBox.style.display = 'block';
+            successBox.textContent = 'Registration successful!...';
+            setTimeout(function () {
+              window.location.href = '/login';
+            }, 1000);
+          } else {
+            emailError.textContent = data.message;
+            emailError.style.display = 'block';
+          }
+        })
+        .catch(function (error) {
+          emailError.textContent = 'Server or network error. Is the backend running?';
           emailError.style.display = 'block';
-        }
-      })
-      .catch(function (error) {
-        emailError.textContent = 'Server or network error. Is the backend running?';
-        emailError.style.display = 'block';
-      });
+        });
     }
   }
 

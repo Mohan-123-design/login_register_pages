@@ -1,4 +1,3 @@
-import react from 'react';
 import './Register.css';
 
 function Register() {
@@ -148,6 +147,7 @@ function Register() {
           }
         })
         .catch(function (error) {
+          console.error(error);
           emailError.textContent = 'Server or network error. Is the backend running?';
           emailError.style.display = 'block';
         });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function CreateSessionModal(props) {
   var [selectedBatch, setSelectedBatch] = useState('');

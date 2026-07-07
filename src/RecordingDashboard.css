@@ -1,0 +1,225 @@
+.recording-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.recording-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #050469, #3a1dde);
+  color: white;
+  padding: 18px 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.recording-page-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.upload-recording-btn {
+  padding: 10px 22px;
+  background-color: #ffffff;
+  color: #050469;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  transition: background-color 0.3s;
+}
+
+.upload-recording-btn:hover {
+  background-color: #e0dff8;
+}
+
+.recording-content {
+  padding: 28px 32px;
+}
+
+.recording-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a2a4a;
+  margin-bottom: 18px;
+}
+
+.recording-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 2px dashed #c0c8d4;
+  color: #888888;
+  font-size: 15px;
+}
+
+.recording-empty-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+.recordings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.recording-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border-left: 5px solid #e44d26;
+  transition: box-shadow 0.3s;
+}
+
+.recording-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.recording-card-id {
+  font-size: 12px;
+  color: #e44d26;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.recording-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a2a4a;
+  margin-bottom: 4px;
+}
+
+.recording-card-session {
+  font-size: 13px;
+  color: #3a1dde;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.recording-card-details {
+  font-size: 13px;
+  color: #666666;
+  margin-bottom: 4px;
+}
+
+.recording-card-details-icon {
+  margin-right: 6px;
+}
+
+.recording-card-file {
+  font-size: 12px;
+  color: #999999;
+  margin-top: 8px;
+  word-break: break-all;
+}
+
+.recording-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 2px solid #c0c8d4;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  z-index: 500;
+}
+
+.recording-stats-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #1a2a4a;
+}
+
+.recording-stats-label {
+  font-weight: 500;
+  color: #666666;
+}
+
+.recording-stats-value {
+  font-weight: 700;
+  font-size: 16px;
+  color: #3a1dde;
+  background-color: #eef1f7;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.selected-file-name {
+  font-size: 12px;
+  color: #3a1dde;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.modal-form-group input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #dedede;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  color: #333333;
+  outline: none;
+  background-color: #ffffff;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.modal-form-group input[type="text"]:focus {
+  border-color: #3a1dde;
+}
+
+.modal-form-group input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #dedede;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  color: #333333;
+  outline: none;
+  background-color: #ffffff;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.modal-form-group input[type="file"]:focus {
+  border-color: #3a1dde;
+}
+
+@media (max-width: 600px) {
+  .recording-header {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    padding: 16px 20px;
+  }
+
+  .recording-content {
+    padding: 18px 16px;
+  }
+
+  .recordings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recording-bottom-bar {
+    padding: 10px 16px;
+  }
+}

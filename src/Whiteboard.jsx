@@ -65,6 +65,7 @@ function Whiteboard(props) {
         var parsed = JSON.parse(savedNotes);
         setStickyNotes(parsed);
       } catch (err) {
+        console.error(err);
       }
     }
   }, []);

@@ -228,7 +228,4 @@ var footerHintStyle = {
   padding: "6px 0 12px 0",
   backgroundColor: "#ffffff",
 };
-var marginStyle = {
-  marginTop: "5px",
-}
 export default ClassroomChat;

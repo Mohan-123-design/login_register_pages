@@ -1,4 +1,3 @@
-import react from 'react';
 import './Login.css';
 
 function Login() {
@@ -51,6 +50,7 @@ function Login() {
           }
         })
         .catch(function (error) {
+          console.error(error);
           errorBox.textContent = 'Server or network error. Is the backend running?';
           errorBox.style.display = 'block';
         });
@@ -133,7 +133,7 @@ function Login() {
             <button type="submit" className="login-button">Login</button>
           </form>
           <p className="register-text">
-            Don't have an account? <a href="/" className="register-link">Register</a>
+            Don&apos;t have an account? <a href="/" className="register-link">Register</a>
           </p>
         </div>
       </div>

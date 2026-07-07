@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './TrainerDashboard.css';
 import CreateSessionModal from './CreateSessionModal';
 
@@ -178,7 +178,7 @@ function TrainerDashboard() {
           <div className="empty-state-box">
             <div className="empty-state-icon">📋</div>
             <p>No sessions scheduled yet.</p>
-            <p>Click "+ Create Live Session" to get started.</p>
+            <p>Click &quot;+ Create Live Session&quot; to get started.</p>
           </div>
         ) : (
           <div className="sessions-grid">

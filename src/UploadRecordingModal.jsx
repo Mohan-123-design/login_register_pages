@@ -90,11 +90,17 @@ function UploadRecordingModal(props) {
       minutes = "0" + minutes;
     }
     var timeString = hours + ":" + minutes + " " + period;
+    var videoFileInput = document.getElementById("recording-video-input");
+    var videoUrl = "";
+    if (videoFileInput.files.length > 0) {
+      videoUrl = URL.createObjectURL(videoFileInput.files[0]);
+    }
     var newRecording = {
       recordingId: newRecordingId,
       session: selectedSession,
       title: recordingTitle,
       videoFile: videoFileName,
+      videoUrl: videoUrl,
       duration: duration,
       uploadDate: dateString,
       uploadTime: timeString,

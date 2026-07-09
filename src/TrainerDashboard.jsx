@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import './TrainerDashboard.css';
-import CreateSessionModal from './CreateSessionModal';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./TrainerDashboard.css";
+import CreateSessionModal from "./CreateSessionModal";
 
 function TrainerDashboard() {
+  var navigate = useNavigate();
   var [sessionsList, setSessionsList] = useState([]);
   var [isModalOpen, setIsModalOpen] = useState(false);
   function openModal() {
@@ -18,6 +20,16 @@ function TrainerDashboard() {
     }
     updatedList.push(newSession);
     setSessionsList(updatedList);
+    var storedSessions = [];
+    var existing = window.localStorage.getItem("createdSessions");
+    if (existing !== null && existing !== "") {
+      storedSessions = JSON.parse(existing);
+    }
+    storedSessions.push(newSession);
+    window.localStorage.setItem(
+      "createdSessions",
+      JSON.stringify(storedSessions),
+    );
   }
   function handleNotifyClick(roomId) {
     var updatedList = [];
@@ -28,7 +40,7 @@ function TrainerDashboard() {
           batchName: sessionsList[i].batchName,
           date: sessionsList[i].date,
           time: sessionsList[i].time,
-          isNotified: true
+          isNotified: true,
         };
         updatedList.push(updatedSession);
       } else {
@@ -36,7 +48,9 @@ function TrainerDashboard() {
       }
     }
     setSessionsList(updatedList);
-    window.alert('Students have been notified successfully for ' + roomId + '!');
+    window.alert(
+      "Students have been notified successfully for " + roomId + "!",
+    );
   }
 
   function handleNotifyAll() {
@@ -50,7 +64,7 @@ function TrainerDashboard() {
           batchName: sessionsList[i].batchName,
           date: sessionsList[i].date,
           time: sessionsList[i].time,
-          isNotified: true
+          isNotified: true,
         };
         updatedList.push(updatedSession);
         countNotified = countNotified + 1;
@@ -60,38 +74,50 @@ function TrainerDashboard() {
     }
 
     setSessionsList(updatedList);
-    window.alert('All ' + countNotified + ' remaining sessions have been notified!');
+    window.alert(
+      "All " + countNotified + " remaining sessions have been notified!",
+    );
   }
 
   function handleStartSession(roomId) {
-    window.sessionStorage.setItem('activeSessionId', roomId);
-    window.location.href = '/classroom';
+    window.sessionStorage.setItem("activeSessionId", roomId);
+    window.location.href = "/classroom";
   }
 
   function formatDate(dateString) {
-    var parts = dateString.split('-');
+    var parts = dateString.split("-");
     var year = parts[0];
     var month = parts[1];
     var day = parts[2];
     var monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
     var monthIndex = parseInt(month) - 1;
     var monthName = monthNames[monthIndex];
 
-    return day + ' ' + monthName + ' ' + year;
+    return day + " " + monthName + " " + year;
   }
 
   function formatTime(timeString) {
-    var timeParts = timeString.split(':');
+    var timeParts = timeString.split(":");
     var hours = parseInt(timeParts[0]);
     var minutes = timeParts[1];
-    var period = 'AM';
+    var period = "AM";
 
     if (hours >= 12) {
-      period = 'PM';
+      period = "PM";
     }
     if (hours > 12) {
       hours = hours - 12;
@@ -100,7 +126,7 @@ function TrainerDashboard() {
       hours = 12;
     }
 
-    return hours + ':' + minutes + ' ' + period;
+    return hours + ":" + minutes + " " + period;
   }
 
   var totalSessions = sessionsList.length;
@@ -128,7 +154,9 @@ function TrainerDashboard() {
         return (
           <button
             className="notify-btn"
-            onClick={function () { handleNotifyClick(rid); }}
+            onClick={function () {
+              handleNotifyClick(rid);
+            }}
           >
             Notify Students
           </button>
@@ -139,13 +167,14 @@ function TrainerDashboard() {
       return (
         <button
           className="start-session-btn"
-          onClick={function () { handleStartSession(rid); }}
+          onClick={function () {
+            handleStartSession(rid);
+          }}
         >
           Start Session
         </button>
       );
     })(session.roomId);
-
     sessionCards.push(
       <div className="session-card" key={session.roomId}>
         <div className="card-room-id">{session.roomId}</div>
@@ -160,7 +189,7 @@ function TrainerDashboard() {
           {notifyButton}
           {startButton}
         </div>
-      </div>
+      </div>,
     );
   }
 
@@ -172,7 +201,40 @@ function TrainerDashboard() {
           <b>+</b> Create Live Session
         </button>
       </div>
-      <div className="dashboard-content" style={{ paddingBottom: '90px' }}>
+      <div className="dashboard-content" style={{ paddingBottom: "90px" }}>
+        <h2 className="section-heading">Quick Navigation</h2>
+        <div className="nav-hub-grid">
+          <div
+            className="nav-hub-card nav-hub-sessions"
+            onClick={function () {
+              navigate("/sessions");
+            }}
+          >
+            <div className="nav-hub-icon">📋</div>
+            <div className="nav-hub-label">Sessions</div>
+            <div className="nav-hub-desc">Create & manage all sessions</div>
+          </div>
+          <div
+            className="nav-hub-card nav-hub-classroom"
+            onClick={function () {
+              navigate("/classroom");
+            }}
+          >
+            <div className="nav-hub-icon">🖥️</div>
+            <div className="nav-hub-label">Classroom</div>
+            <div className="nav-hub-desc">Open virtual classroom</div>
+          </div>
+          <div
+            className="nav-hub-card nav-hub-recordings"
+            onClick={function () {
+              navigate("/recordings");
+            }}
+          >
+            <div className="nav-hub-icon">🎥</div>
+            <div className="nav-hub-label">Recordings</div>
+            <div className="nav-hub-desc">View session recordings</div>
+          </div>
+        </div>
         <h2 className="section-heading">Upcoming Sessions</h2>
         {sessionsList.length === 0 ? (
           <div className="empty-state-box">
@@ -181,9 +243,7 @@ function TrainerDashboard() {
             <p>Click &quot;+ Create Live Session&quot; to get started.</p>
           </div>
         ) : (
-          <div className="sessions-grid">
-            {sessionCards}
-          </div>
+          <div className="sessions-grid">{sessionCards}</div>
         )}
       </div>
       {sessionsList.length > 0 && (
@@ -227,4 +287,3 @@ function TrainerDashboard() {
 }
 
 export default TrainerDashboard;
-

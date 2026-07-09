@@ -6,13 +6,19 @@ function UploadRecordingModal(props) {
   var [videoFileName, setVideoFileName] = useState("");
   var [duration, setDuration] = useState("");
   var [errorMessage, setErrorMessage] = useState("");
-  var sessionOptions = [
+
+  var defaultBatches = [
     "AI Education Batch 1",
     "AI Education Batch 2",
     "AI Education Batch 3",
     "Data Science Batch 1",
     "Data Science Batch 2",
   ];
+
+  var sessionOptions = [];
+  for (var b = 0; b < defaultBatches.length; b++) {
+    sessionOptions.push(defaultBatches[b]);
+  }
 
   function handleSessionChange(e) {
     setSelectedSession(e.target.value);

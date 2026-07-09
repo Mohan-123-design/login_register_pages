@@ -1,0 +1,282 @@
+.sm-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.sm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sm-header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.sm-btn-add {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sm-btn-add:hover {
+  background-color: #45a049;
+}
+
+.sm-filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sm-input,
+.sm-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  flex: 1;
+}
+
+.sm-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.sm-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: calc(33.333% - 20px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.sm-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.sm-card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #222;
+}
+
+.sm-status {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.sm-status.upcoming {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.sm-status.live {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.sm-status.completed {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
+.sm-card-body p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.sm-card-actions {
+  margin-top: auto;
+  padding-top: 15px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #eee;
+}
+
+.sm-btn-edit,
+.sm-btn-delete,
+.sm-btn-join {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  flex: 1;
+}
+
+.sm-btn-edit {
+  background-color: #007bff;
+  color: white;
+}
+
+.sm-btn-edit:hover {
+  background-color: #0069d9;
+}
+
+.sm-btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.sm-btn-delete:hover {
+  background-color: #c82333;
+}
+
+.sm-btn-join {
+  background-color: #28a745;
+  color: white;
+}
+
+.sm-btn-join:hover {
+  background-color: #218838;
+}
+
+.sm-no-results {
+  text-align: center;
+  font-size: 18px;
+  color: #777;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.sm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.sm-modal {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.sm-modal h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.sm-form-group {
+  margin-bottom: 15px;
+}
+
+.sm-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.sm-form-group input,
+.sm-form-group select,
+.sm-form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.sm-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.sm-btn-save {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sm-btn-save:hover {
+  background-color: #45a049;
+}
+
+.sm-btn-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sm-btn-cancel:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 900px) {
+  .sm-card {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 600px) {
+  .sm-filters {
+    flex-direction: column;
+  }
+
+  .sm-card {
+    width: 100%;
+  }
+
+  .sm-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

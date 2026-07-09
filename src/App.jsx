@@ -5,6 +5,7 @@ import ForgotPassword from './ForgotPassword';
 import DigitalClassroom from './DigitalClassroom';
 import TrainerDashboard from './TrainerDashboard';
 import RecordingDashboard from './RecordingDashboard';
+import SessionManagement from './SessionManagement';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/dashboard" element={<TrainerDashboard />} />
         <Route path="/classroom" element={<DigitalClassroom />} />
         <Route path="/recordings" element={<RecordingDashboard />} />
+        <Route path="/sessions" element={<SessionManagement />} />
       </Routes>
     </BrowserRouter>
   );

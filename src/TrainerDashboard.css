@@ -1,9 +1,79 @@
 .dashboard-page {
   min-height: 100vh;
   background-color: #eef1f7;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   padding: 0;
   margin: 0;
+}
+
+.nav-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.nav-hub-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 28px 24px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border-bottom: 4px solid transparent;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  user-select: none;
+}
+
+.nav-hub-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+}
+
+.nav-hub-sessions {
+  border-bottom-color: #3a1dde;
+}
+
+.nav-hub-sessions:hover {
+  background: linear-gradient(180deg, #f3f0ff 0%, #ffffff 100%);
+}
+
+.nav-hub-classroom {
+  border-bottom-color: #2166c4;
+}
+
+.nav-hub-classroom:hover {
+  background: linear-gradient(180deg, #e8f0fe 0%, #ffffff 100%);
+}
+
+.nav-hub-recordings {
+  border-bottom-color: #e65100;
+}
+
+.nav-hub-recordings:hover {
+  background: linear-gradient(180deg, #fff3e0 0%, #ffffff 100%);
+}
+
+.nav-hub-icon {
+  font-size: 38px;
+  margin-bottom: 10px;
+}
+
+.nav-hub-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a2a4a;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.nav-hub-desc {
+  font-size: 13px;
+  color: #888888;
+  font-weight: 400;
 }
 
 .dashboard-header {
@@ -31,7 +101,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   transition: background-color 0.3s;
 }
 
@@ -124,7 +194,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   transition: background-color 0.3s;
 }
 
@@ -141,7 +211,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: not-allowed;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   opacity: 0.85;
 }
 
@@ -154,7 +224,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   transition: opacity 0.3s;
 }
 
@@ -229,7 +299,7 @@
   border: 1.5px solid #dedede;
   border-radius: 8px;
   font-size: 14px;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   color: #333333;
   outline: none;
   background-color: #ffffff;
@@ -262,7 +332,7 @@
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   transition: opacity 0.3s;
   margin-top: 6px;
 }
@@ -321,7 +391,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   transition: opacity 0.3s;
 }
 
@@ -338,7 +408,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: not-allowed;
-  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   opacity: 0.85;
 }
 
@@ -355,6 +425,10 @@
   }
 
   .sessions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-hub-grid {
     grid-template-columns: 1fr;
   }
 

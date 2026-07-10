@@ -1,7 +1,7 @@
 .register-page {
   display: flex;
   min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .register-left-section {
@@ -130,7 +130,7 @@
   border: 1.5px solid #dedede;
   border-radius: 10px;
   font-size: 14px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   color: #333333;
   outline: none;
   transition: border-color 0.3s;
@@ -201,7 +201,7 @@
   border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   cursor: pointer;
   transition: opacity 0.3s;
   margin-top: 10px;
@@ -227,7 +227,7 @@
   background: none;
   border: none;
   font-size: 13px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .register-login-link:hover {
@@ -271,4 +271,21 @@
     flex-direction: column;
     gap: 0;
   }
+}
+
+.register-role-select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #dedede;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  color: #333333;
+  outline: none;
+  background-color: #ffffff;
+  transition: border-color 0.3s;
+}
+
+.register-role-select:focus {
+  border-color: #1c0ab7;
 }

@@ -6,6 +6,9 @@ import DigitalClassroom from './DigitalClassroom';
 import TrainerDashboard from './TrainerDashboard';
 import RecordingDashboard from './RecordingDashboard';
 import SessionManagement from './SessionManagement';
+import AccessDenied from './AccessDenied';
+import AttendanceManagement from './AttendanceManagement';
+import MyAttendance from './MyAttendance';
 
 function App() {
   return (
@@ -18,6 +21,9 @@ function App() {
         <Route path="/classroom" element={<DigitalClassroom />} />
         <Route path="/recordings" element={<RecordingDashboard />} />
         <Route path="/sessions" element={<SessionManagement />} />
+        <Route path="/access-denied" element={<AccessDenied />} />
+        <Route path="/attendance" element={<AttendanceManagement />} />
+        <Route path="/my-attendance" element={<MyAttendance />} />
       </Routes>
     </BrowserRouter>
   );

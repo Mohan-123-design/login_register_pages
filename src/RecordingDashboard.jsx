@@ -7,6 +7,11 @@ function RecordingDashboard() {
   var [isModalOpen, setIsModalOpen] = useState(false);
   var [currentlyPlaying, setCurrentlyPlaying] = useState(null);
   var [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  var loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser === null) {
+    window.location.href = "/access-denied";
+    return null;
+  }
 
   function openModal() {
     setIsModalOpen(true);

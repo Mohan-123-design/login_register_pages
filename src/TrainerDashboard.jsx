@@ -7,6 +7,16 @@ function TrainerDashboard() {
   var navigate = useNavigate();
   var [sessionsList, setSessionsList] = useState([]);
   var [isModalOpen, setIsModalOpen] = useState(false);
+  var loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser === null) {
+    window.location.href = "/access-denied";
+    return null;
+  }
+  var userData = JSON.parse(loggedInUser);
+  if (userData.role !== "Teacher" && userData.role !== "Admin") {
+    window.location.href = "/access-denied";
+    return null;
+  }
   function openModal() {
     setIsModalOpen(true);
   }
@@ -233,6 +243,16 @@ function TrainerDashboard() {
             <div className="nav-hub-icon">🎥</div>
             <div className="nav-hub-label">Recordings</div>
             <div className="nav-hub-desc">View session recordings</div>
+          </div>
+          <div
+            className="nav-hub-card nav-hub-attendance"
+            onClick={function () {
+              navigate("/attendance");
+            }}
+          >
+            <div className="nav-hub-icon">📋</div>
+            <div className="nav-hub-label">Attendance</div>
+            <div className="nav-hub-desc">Mark & view attendance</div>
           </div>
         </div>
         <h2 className="section-heading">Upcoming Sessions</h2>

@@ -179,15 +179,7 @@ function checkRole(allowedRoles) {
   };
 }
 
-var attendanceSchema = new mongoose.Schema({
-  studentEmail: String,
-  studentName: String,
-  date: String,
-  status: String,
-  markedBy: String,
-});
-
-var Attendance = mongoose.model("Attendance", attendanceSchema);
+var Attendance = require("./models/Attendance.cjs");
 
 app.get(
   "/api/students",
@@ -286,6 +278,8 @@ app.get(
     }
   },
 );
+
+app.use("/api/attendance", require("./routes/attendanceRoutes.cjs")(verifyToken, checkRole));
 
 app.listen(5000, function () {
   console.log("Server is running on port 5000");

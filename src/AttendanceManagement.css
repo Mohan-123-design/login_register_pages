@@ -237,6 +237,44 @@
   font-weight: 600;
 }
 
+.status-late {
+  color: #856404;
+  background-color: #fff3cd;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-unknown {
+  color: #383d41;
+  background-color: #e2e3e5;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.attendance-time-input {
+  padding: 6px 10px;
+  border: 1.5px solid #dedede;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+  color: #333333;
+  outline: none;
+}
+
+.attendance-time-input:focus {
+  border-color: #3a1dde;
+}
+
+.attendance-submit-btn:disabled,
+.attendance-load-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 @media (max-width: 600px) {
   .attendance-header {
     flex-direction: column;

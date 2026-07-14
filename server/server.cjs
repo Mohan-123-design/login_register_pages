@@ -127,12 +127,10 @@ app.post("/api/reset-password", function (req, res) {
 function verifyToken(req, res, next) {
   var authHeader = req.headers["authorization"];
   if (!authHeader) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        message: "No token provided. Please login first.",
-      });
+    return res.status(401).json({
+      success: false,
+      message: "No token provided. Please login first.",
+    });
   }
   var token = authHeader.split(" ")[1];
   if (!token) {
@@ -145,12 +143,10 @@ function verifyToken(req, res, next) {
     req.user = decoded;
     next();
   } catch {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        message: "Invalid or expired token. Please login again.",
-      });
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired token. Please login again.",
+    });
   }
 }
 
@@ -168,12 +164,10 @@ function checkRole(allowedRoles) {
       }
     }
     if (isAllowed === false) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "Access denied. You do not have permission.",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. You do not have permission.",
+      });
     }
     next();
   };
@@ -199,54 +193,6 @@ app.get(
         }
       }
       res.json({ success: true, students: studentList });
-    });
-  },
-);
-app.post(
-  "/api/mark-attendance",
-  verifyToken,
-  checkRole(["Teacher", "Admin"]),
-  function (req, res) {
-    var records = req.body.records;
-    var date = req.body.date;
-    var markedBy = req.user.email;
-
-    if (!records || !date) {
-      return res.json({
-        success: false,
-        message: "Please provide date and attendance records.",
-      });
-    }
-
-    Attendance.deleteMany({ date: date, markedBy: markedBy }).then(function () {
-      var savedCount = 0;
-      var totalRecords = records.length;
-
-      if (totalRecords === 0) {
-        return res.json({ success: true, message: "No records to save." });
-      }
-
-      for (var i = 0; i < totalRecords; i++) {
-        var newRecord = new Attendance({
-          studentEmail: records[i].studentEmail,
-          studentName: records[i].studentName,
-          date: date,
-          status: records[i].status,
-          markedBy: markedBy,
-        });
-        newRecord.save().then(function () {
-          savedCount = savedCount + 1;
-          if (savedCount === totalRecords) {
-            res.json({
-              success: true,
-              message:
-                "Attendance marked successfully for " +
-                totalRecords +
-                " students.",
-            });
-          }
-        });
-      }
     });
   },
 );
@@ -279,7 +225,10 @@ app.get(
   },
 );
 
-app.use("/api/attendance", require("./routes/attendanceRoutes.cjs")(verifyToken, checkRole));
+app.use(
+  "/api/attendance",
+  require("./routes/attendanceRoutes.cjs")(verifyToken, checkRole),
+);
 
 app.listen(5000, function () {
   console.log("Server is running on port 5000");

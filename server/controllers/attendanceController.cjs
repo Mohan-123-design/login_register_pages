@@ -3,6 +3,15 @@ function markAttendance(req, res) {
   var userId = req.body.userId;
   var sessionId = req.body.sessionId;
   var joinTime = req.body.joinTime;
+  var status = req.body.status;
+  var studentName = req.body.studentName;
+  var studentEmail = req.body.studentEmail;
+  var leaveTime = req.body.leaveTime;
+  var date = req.body.date;
+  var markedBy = "";
+  if (req.user && req.user.email) {
+    markedBy = req.user.email;
+  }
   if (!userId) {
     return res
       .status(400)
@@ -18,6 +27,15 @@ function markAttendance(req, res) {
       .status(400)
       .json({ success: false, message: "joinTime is required." });
   }
+  if (status === undefined || status === "") {
+    status = "Present";
+  }
+  if (status !== "Present" && status !== "Absent" && status !== "Late") {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid status value. Status must be Present, Absent, or Late.",
+    });
+  }
   Attendance.findOne({ userId: userId, sessionId: sessionId })
     .then(function (existingRecord) {
       if (existingRecord) {
@@ -26,12 +44,34 @@ function markAttendance(req, res) {
           message: "Attendance already marked for this session.",
         });
       }
-      var newRecord = new Attendance({
+      var recordData = {
         userId: userId,
         sessionId: sessionId,
         joinTime: new Date(joinTime),
-        status: "Present",
-      });
+        status: status,
+      };
+      if (studentName) {
+        recordData.studentName = studentName;
+      }
+      if (studentEmail) {
+        recordData.studentEmail = studentEmail;
+      }
+      if (markedBy) {
+        recordData.markedBy = markedBy;
+      }
+      if (date) {
+        recordData.date = date;
+      }
+      if (leaveTime) {
+        recordData.leaveTime = new Date(leaveTime);
+        var joinMs = new Date(joinTime).getTime();
+        var leaveMs = new Date(leaveTime).getTime();
+        if (leaveMs > joinMs) {
+          recordData.duration = Math.round((leaveMs - joinMs) / (1000 * 60));
+        }
+      }
+
+      var newRecord = new Attendance(recordData);
 
       newRecord
         .save()
@@ -44,22 +84,18 @@ function markAttendance(req, res) {
         })
         .catch(function (err) {
           console.log(err);
-          res
-            .status(500)
-            .json({
-              success: false,
-              message: "Could not save attendance record.",
-            });
+          res.status(500).json({
+            success: false,
+            message: "Could not save attendance record.",
+          });
         });
     })
     .catch(function (err) {
       console.log(err);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Error while checking for existing record.",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Error while checking for existing record.",
+      });
     });
 }
 function getAttendanceBySession(req, res) {
@@ -77,12 +113,10 @@ function getAttendanceBySession(req, res) {
     })
     .catch(function (err) {
       console.log(err);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Error fetching attendance records.",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Error fetching attendance records.",
+      });
     });
 }
 function getAttendanceByStudent(req, res) {
@@ -100,12 +134,10 @@ function getAttendanceByStudent(req, res) {
     })
     .catch(function (err) {
       console.log(err);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Error fetching student attendance.",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Error fetching student attendance.",
+      });
     });
 }
 function updateAttendance(req, res) {
@@ -146,15 +178,32 @@ function updateAttendance(req, res) {
       }
       var durationInMs = leaveDate - joinDate;
       var durationInMinutes = Math.round(durationInMs / (1000 * 60));
+      var manualStatus = req.body.status;
+      var updatedStatus;
 
-      var updatedStatus = "";
-      if (durationInMinutes < 10) {
-        updatedStatus = "Absent";
-      } else if (durationInMinutes < 30) {
-        updatedStatus = "Late";
+      if (manualStatus !== undefined && manualStatus !== "") {
+        if (
+          manualStatus !== "Present" &&
+          manualStatus !== "Absent" &&
+          manualStatus !== "Late"
+        ) {
+          return res.status(400).json({
+            success: false,
+            message:
+              "Invalid status value. Status must be Present, Absent, or Late.",
+          });
+        }
+        updatedStatus = manualStatus;
       } else {
-        updatedStatus = "Present";
+        if (durationInMinutes < 10) {
+          updatedStatus = "Absent";
+        } else if (durationInMinutes < 30) {
+          updatedStatus = "Late";
+        } else {
+          updatedStatus = "Present";
+        }
       }
+
       record.leaveTime = leaveDate;
       record.duration = durationInMinutes;
       record.status = updatedStatus;
@@ -177,12 +226,10 @@ function updateAttendance(req, res) {
     })
     .catch(function (err) {
       console.log(err);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Error looking up attendance record.",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Error looking up attendance record.",
+      });
     });
 }
 

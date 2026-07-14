@@ -53,11 +53,14 @@ function MyAttendance() {
 
   var presentCount = 0;
   var absentCount = 0;
+  var lateCount = 0;
   for (var k = 0; k < attendanceRecords.length; k++) {
     if (attendanceRecords[k].status === "Present") {
       presentCount = presentCount + 1;
-    } else {
+    } else if (attendanceRecords[k].status === "Absent") {
       absentCount = absentCount + 1;
+    } else if (attendanceRecords[k].status === "Late") {
+      lateCount = lateCount + 1;
     }
   }
 
@@ -74,7 +77,11 @@ function MyAttendance() {
             className={
               record.status === "Present"
                 ? "my-status-present"
-                : "my-status-absent"
+                : record.status === "Absent"
+                ? "my-status-absent"
+                : record.status === "Late"
+                ? "my-status-late"
+                : "my-status-unknown"
             }
           >
             {record.status}
@@ -132,6 +139,12 @@ function MyAttendance() {
               <span className="my-attendance-stat-label">Absent:</span>
               <span className="my-attendance-stat-value my-stat-absent">
                 {absentCount}
+              </span>
+            </div>
+            <div className="my-attendance-stat-item">
+              <span className="my-attendance-stat-label">Late:</span>
+              <span className="my-attendance-stat-value my-stat-late">
+                {lateCount}
               </span>
             </div>
           </div>

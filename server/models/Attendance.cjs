@@ -12,8 +12,11 @@ var attendanceSchema = new mongoose.Schema(
     studentName: String,
     date: String,
     markedBy: String,
-
-    status: String,
+    status: {
+      type: String,
+      enum: ["Present", "Absent", "Late"],
+      required: true,
+    },
   },
   { timestamps: true },
 );

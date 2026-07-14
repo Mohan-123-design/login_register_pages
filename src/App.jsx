@@ -9,6 +9,7 @@ import SessionManagement from './SessionManagement';
 import AccessDenied from './AccessDenied';
 import AttendanceManagement from './AttendanceManagement';
 import MyAttendance from './MyAttendance';
+import AttendanceDashboard from './AttendanceDashboard';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/access-denied" element={<AccessDenied />} />
         <Route path="/attendance" element={<AttendanceManagement />} />
         <Route path="/my-attendance" element={<MyAttendance />} />
+        <Route path="/attendance-dashboard" element={<AttendanceDashboard />} />
       </Routes>
     </BrowserRouter>
   );

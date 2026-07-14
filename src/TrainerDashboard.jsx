@@ -254,6 +254,16 @@ function TrainerDashboard() {
             <div className="nav-hub-label">Attendance</div>
             <div className="nav-hub-desc">Mark & view attendance</div>
           </div>
+          <div
+            className="nav-hub-card nav-hub-attendance"
+            onClick={function () {
+              navigate("/attendance-dashboard");
+            }}
+          >
+            <div className="nav-hub-icon">📊</div>
+            <div className="nav-hub-label">Attendance Dashboard</div>
+            <div className="nav-hub-desc">View attendance stats & reports</div>
+          </div>
         </div>
         <h2 className="section-heading">Upcoming Sessions</h2>
         {sessionsList.length === 0 ? (

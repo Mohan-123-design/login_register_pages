@@ -137,6 +137,11 @@
   background-color: #f8d7da;
 }
 
+.my-stat-late {
+  color: #856404;
+  background-color: #fff3cd;
+}
+
 .my-attendance-table-section {
   background-color: #ffffff;
   border-radius: 12px;
@@ -185,6 +190,24 @@
 .my-status-absent {
   color: #721c24;
   background-color: #f8d7da;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.my-status-late {
+  color: #856404;
+  background-color: #fff3cd;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.my-status-unknown {
+  color: #383d41;
+  background-color: #e2e3e5;
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 13px;

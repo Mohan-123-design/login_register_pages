@@ -14,7 +14,7 @@ function MyAttendance() {
   if (
     userData.role !== "Student" &&
     userData.role !== "Employee" &&
-    userData.role !== "Teacher" &&
+    userData.role !== "Trainer" &&
     userData.role !== "Admin"
   ) {
     window.location.href = "/access-denied";

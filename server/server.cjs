@@ -178,7 +178,7 @@ var Attendance = require("./models/Attendance.cjs");
 app.get(
   "/api/students",
   verifyToken,
-  checkRole(["Teacher", "Admin"]),
+  checkRole(["Trainer", "Admin"]),
   function (req, res) {
     User.find({}).then(function (allUsers) {
       var studentList = [];
@@ -199,13 +199,13 @@ app.get(
 app.get(
   "/api/attendance",
   verifyToken,
-  checkRole(["Student", "Teacher", "Employee", "Admin"]),
+  checkRole(["Student", "Trainer", "Employee", "Admin"]),
   function (req, res) {
     var userRole = req.user.role;
     var userEmail = req.user.email;
     var dateFilter = req.query.date;
 
-    if (userRole === "Teacher" || userRole === "Admin") {
+    if (userRole === "Trainer" || userRole === "Admin") {
       var query = {};
       if (dateFilter) {
         query.date = dateFilter;
@@ -228,6 +228,11 @@ app.get(
 app.use(
   "/api/attendance",
   require("./routes/attendanceRoutes.cjs")(verifyToken, checkRole),
+);
+
+app.use(
+  "/api/chat",
+  require("./routes/chatRoutes.cjs")(verifyToken, checkRole),
 );
 
 app.listen(5000, function () {

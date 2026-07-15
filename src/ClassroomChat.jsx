@@ -1,30 +1,122 @@
 import { useState, useRef, useEffect } from "react";
 function ClassroomChat() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "Trainer",
-      text: "Welcome to all Team members!",
-    },
-  ]);
-  const [inputText, setInputText] = useState("");
-  const bottomOfFeedRef = useRef(null);
-  useEffect(function () {
-    bottomOfFeedRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  var [messages, setMessages] = useState([]);
+  var [inputText, setInputText] = useState("");
+  var bottomOfFeedRef = useRef(null);
+  var loggedInUser = localStorage.getItem("loggedInUser");
+  var userData = loggedInUser ? JSON.parse(loggedInUser) : null;
+  var userRole = userData ? userData.role : "";
+  var userEmail = userData ? userData.email : "";
+  var sessionId = window.sessionStorage.getItem("activeSessionId");
 
+  function getToken() {
+    return localStorage.getItem("token");
+  }
+  function loadMessages() {
+    fetch("/api/chat/session/" + sessionId, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getToken(),
+      },
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.success) {
+          setMessages(data.data);
+        }
+      })
+      .catch(function (err) {
+        console.log("Error loading messages:", err);
+      });
+  }
+  useEffect(
+    function () {
+      if (sessionId) {
+        loadMessages();
+      }
+    },
+    [sessionId],
+  );
+  useEffect(
+    function () {
+      if (bottomOfFeedRef.current) {
+        bottomOfFeedRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    },
+    [messages],
+  );
   function handleSendMessage() {
     var cleanedText = inputText.trim();
     if (cleanedText === "") {
       return;
     }
-    var newMessage = {
-      id: messages.length + 1,
-      sender: "You",
-      text: cleanedText,
-    };
-    setMessages([...messages, newMessage]);
-    setInputText("");
+
+    fetch("/api/chat/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getToken(),
+      },
+      body: JSON.stringify({
+        sessionId: sessionId,
+        message: cleanedText,
+      }),
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.success) {
+          var updated = [];
+          for (var i = 0; i < messages.length; i++) {
+            updated.push(messages[i]);
+          }
+          updated.push(data.data);
+          setMessages(updated);
+          setInputText("");
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(function (err) {
+        console.log("Error sending message:", err);
+      });
+  }
+  function handleDeleteMessage(messageId) {
+    var sure = confirm("Delete this message?");
+    if (!sure) {
+      return;
+    }
+
+    fetch("/api/chat/" + messageId, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getToken(),
+      },
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.success) {
+          var remaining = [];
+          for (var i = 0; i < messages.length; i++) {
+            if (messages[i]._id !== messageId) {
+              remaining.push(messages[i]);
+            }
+          }
+          setMessages(remaining);
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(function (err) {
+        console.log("Error deleting message:", err);
+      });
   }
 
   function handleKeyDown(event) {
@@ -36,6 +128,7 @@ function ClassroomChat() {
   function handleInputChange(event) {
     setInputText(event.target.value);
   }
+
   return (
     <div style={outerWrapperStyle}>
       <div style={headerStyle}>
@@ -43,25 +136,29 @@ function ClassroomChat() {
       </div>
       <div style={messageFeedStyle}>
         {messages.map(function (message) {
-          var isMe = message.sender === "You";
+          var isMe = message.senderId === userEmail;
           return (
             <div
-              key={message.id}
+              key={message._id}
               style={isMe ? messageRowRightStyle : messageRowLeftStyle}
             >
-
               <div style={isMe ? youBubbleStyle : trainerBubbleStyle}>
-
-
-                <div style={isMe ? youSenderLabelStyle : trainerSenderLabelStyle}>
-                  {message.sender}
+                <div
+                  style={isMe ? youSenderLabelStyle : trainerSenderLabelStyle}
+                >
+                  {message.senderName}
                 </div>
-
-
-                <div style={messageTextStyle}>
-                  {message.text}
-                </div>
-
+                <div style={messageTextStyle}>{message.message}</div>
+                {(userRole === "Trainer" || userRole === "Admin") && (
+                  <button
+                    onClick={function () {
+                      handleDeleteMessage(message._id);
+                    }}
+                    style={deleteBtnStyle}
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -228,4 +325,15 @@ var footerHintStyle = {
   padding: "6px 0 12px 0",
   backgroundColor: "#ffffff",
 };
+var deleteBtnStyle = {
+  marginTop: "6px",
+  padding: "2px 8px",
+  fontSize: "11px",
+  backgroundColor: "rgba(255,255,255,0.15)",
+  color: "#ffcdd2",
+  border: "1px solid rgba(255,255,255,0.2)",
+  borderRadius: "4px",
+  cursor: "pointer",
+};
+
 export default ClassroomChat;

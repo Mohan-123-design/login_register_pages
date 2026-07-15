@@ -386,7 +386,7 @@ function Register() {
               <label htmlFor="role-select">Select Your Role</label>
               <select id="role-select" className="register-role-select">
                 <option value="Student">Student</option>
-                <option value="Teacher">Teacher</option>
+                <option value="Trainer">Trainer</option>
                 <option value="Employer">Employer</option>
                 <option value="Employee">Employee</option>
                 <option value="Admin">Admin</option>

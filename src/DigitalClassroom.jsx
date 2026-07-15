@@ -36,7 +36,7 @@ function DigitalClassroom() {
   var userData = JSON.parse(loggedInUser);
   if (
     userData.role !== "Student" &&
-    userData.role !== "Teacher" &&
+    userData.role !== "Trainer" &&
     userData.role !== "Admin"
   ) {
     window.location.href = "/access-denied";

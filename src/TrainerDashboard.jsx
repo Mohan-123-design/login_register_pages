@@ -13,7 +13,7 @@ function TrainerDashboard() {
     return null;
   }
   var userData = JSON.parse(loggedInUser);
-  if (userData.role !== "Teacher" && userData.role !== "Admin") {
+  if (userData.role !== "Trainer" && userData.role !== "Admin") {
     window.location.href = "/access-denied";
     return null;
   }

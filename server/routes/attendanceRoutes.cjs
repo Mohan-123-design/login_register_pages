@@ -5,27 +5,26 @@ module.exports = function (verifyToken, checkRole) {
   router.post(
     "/mark",
     verifyToken,
-    checkRole(["Student", "Teacher", "Employee", "Admin"]),
+    checkRole(["Student", "Trainer", "Employee", "Admin"]),
     attendanceController.markAttendance,
   );
   router.get(
     "/session/:sessionId",
     verifyToken,
-    checkRole(["Teacher", "Admin"]),
+    checkRole(["Trainer", "Admin"]),
     attendanceController.getAttendanceBySession,
   );
   router.get(
     "/student/:studentId",
     verifyToken,
-    checkRole(["Student", "Teacher", "Employee", "Admin"]),
+    checkRole(["Student", "Trainer", "Employee", "Admin"]),
     attendanceController.getAttendanceByStudent,
   );
   router.put(
     "/update",
     verifyToken,
-    checkRole(["Student", "Teacher", "Employee", "Admin"]),
+    checkRole(["Student", "Trainer", "Employee", "Admin"]),
     attendanceController.updateAttendance,
   );
-
   return router;
 };

@@ -120,7 +120,7 @@ function SessionManagement() {
   }
 
   function joinSession(id) {
-    window.alert("Joining session: " + id);
+    window.sessionStorage.setItem("activeSessionId", id);
     window.location.href = "/classroom";
   }
   var filteredSessions = [];

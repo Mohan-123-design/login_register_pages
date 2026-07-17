@@ -26,5 +26,19 @@ module.exports = function (verifyToken, checkRole) {
     checkRole(["Student", "Trainer", "Employee", "Admin"]),
     attendanceController.updateAttendance,
   );
+  router.get(
+    "/report/:sessionId",
+    verifyToken,
+    checkRole(["Trainer", "Admin"]),
+    attendanceController.getSessionReport,
+  );
+
+  router.get(
+    "/student-report/:studentId",
+    verifyToken,
+    checkRole(["Student", "Trainer", "Employee", "Admin"]),
+    attendanceController.getStudentReport,
+  );
+
   return router;
 };

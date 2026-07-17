@@ -1,4 +1,5 @@
 var Attendance = require("../models/Attendance.cjs");
+var attendanceHelper = require("./attendanceHelper.cjs");
 function markAttendance(req, res) {
   var userId = req.body.userId;
   var sessionId = req.body.sessionId;
@@ -233,9 +234,73 @@ function updateAttendance(req, res) {
     });
 }
 
+function getSessionReport(req, res) {
+  var sessionId = req.params.sessionId;
+
+  if (!sessionId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "sessionId is required." });
+  }
+  Attendance.find({ sessionId: sessionId })
+    .then(function (records) {
+      var reportData = attendanceHelper.calculateReportData(records);
+      res.json({
+        success: true,
+        sessionId: sessionId,
+        totalStudents: reportData.totalRecords,
+        present: reportData.present,
+        absent: reportData.absent,
+        late: reportData.late,
+        attendancePercentage: reportData.attendancePercentage,
+        totalDurationInMinutes: reportData.totalDurationInMinutes,
+      });
+    })
+    .catch(function (err) {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching attendance records for report.",
+      });
+    });
+}
+
+function getStudentReport(req, res) {
+  var studentId = req.params.studentId;
+
+  if (!studentId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "studentId is required." });
+  }
+  Attendance.find({ userId: studentId })
+    .then(function (records) {
+      var reportData = attendanceHelper.calculateReportData(records);
+      res.json({
+        success: true,
+        studentId: studentId,
+        totalSessions: reportData.totalRecords,
+        present: reportData.present,
+        absent: reportData.absent,
+        late: reportData.late,
+        attendancePercentage: reportData.attendancePercentage,
+        totalDurationInMinutes: reportData.totalDurationInMinutes,
+      });
+    })
+    .catch(function (err) {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching student records for report.",
+      });
+    });
+}
+
 module.exports = {
   markAttendance: markAttendance,
   getAttendanceBySession: getAttendanceBySession,
   getAttendanceByStudent: getAttendanceByStudent,
   updateAttendance: updateAttendance,
+  getSessionReport: getSessionReport,
+  getStudentReport: getStudentReport,
 };

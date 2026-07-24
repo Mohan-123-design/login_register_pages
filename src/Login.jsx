@@ -43,7 +43,11 @@ function Login() {
             localStorage.setItem("token", data.token);
             localStorage.setItem("loggedInUser", JSON.stringify(data.user));
             setTimeout(function () {
-              window.location.href = "/dashboard";
+              if (data.user && data.user.role === "Student") {
+                window.location.href = "/student-dashboard";
+              } else {
+                window.location.href = "/dashboard";
+              }
             }, 800);
           } else {
             errorBox.textContent = "Email id or password is incorrect";

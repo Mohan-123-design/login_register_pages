@@ -15,8 +15,7 @@ var whiteboardSchema = new mongoose.Schema(
     },
     toolType: {
       type: String,
-      enum: ["Pen", "Eraser", "Shape", "Text"],
-      default: "Pen",
+      default: "pen",
     },
     color: {
       type: String,

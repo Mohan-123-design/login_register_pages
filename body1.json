@@ -1,0 +1,7 @@
+{
+  "title": "Test Notice",
+  "message": "Testing module 2",
+  "recipientType": "All",
+  "senderId": "trainer@example.com",
+  "senderRole": "Trainer"
+}

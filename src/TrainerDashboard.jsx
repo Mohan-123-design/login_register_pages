@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./TrainerDashboard.css";
 import CreateSessionModal from "./CreateSessionModal";
@@ -8,6 +8,27 @@ function TrainerDashboard() {
   var [sessionsList, setSessionsList] = useState([]);
   var [isModalOpen, setIsModalOpen] = useState(false);
   var loggedInUser = localStorage.getItem("loggedInUser");
+
+  useEffect(() => {
+    async function fetchSessions() {
+      try {
+        var token = localStorage.getItem("token");
+        var response = await fetch("http://localhost:5000/api/sessions", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        var data = await response.json();
+        if (data.success) {
+          setSessionsList(data.sessions);
+        }
+      } catch (error) {
+        console.error("Error fetching sessions:", error);
+      }
+    }
+    fetchSessions();
+  }, []);
+
   if (loggedInUser === null) {
     window.location.href = "/access-denied";
     return null;
@@ -24,22 +45,7 @@ function TrainerDashboard() {
     setIsModalOpen(false);
   }
   function addNewSession(newSession) {
-    var updatedList = [];
-    for (var i = 0; i < sessionsList.length; i++) {
-      updatedList.push(sessionsList[i]);
-    }
-    updatedList.push(newSession);
-    setSessionsList(updatedList);
-    var storedSessions = [];
-    var existing = window.localStorage.getItem("createdSessions");
-    if (existing !== null && existing !== "") {
-      storedSessions = JSON.parse(existing);
-    }
-    storedSessions.push(newSession);
-    window.localStorage.setItem(
-      "createdSessions",
-      JSON.stringify(storedSessions),
-    );
+    setSessionsList(prev => [newSession, ...prev]);
   }
   function handleNotifyClick(roomId) {
     var updatedList = [];
@@ -89,9 +95,44 @@ function TrainerDashboard() {
     );
   }
 
-  function handleStartSession(roomId) {
+  async function handleStartSession(roomId, batchName) {
     window.sessionStorage.setItem("activeSessionId", roomId);
-    window.location.href = "/classroom";
+
+    try {
+      var token = localStorage.getItem("token");
+      var userData = JSON.parse(localStorage.getItem("loggedInUser"));
+      
+      var fetchPromise = fetch("http://localhost:5000/api/notifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+          title: "Session Started",
+          message: "Trainer has started the live session for " + batchName,
+          recipientType: "All",
+          senderId: userData.email,
+          senderRole: userData.role
+        })
+      });
+
+      var timeoutPromise = new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          reject(new Error("Timeout"));
+        }, 2000);
+      });
+      
+      var response = await Promise.race([fetchPromise, timeoutPromise]);
+      if (response && !response.ok) {
+        var errText = await response.text();
+        console.error("Failed to create notification. Status:", response.status, "Body:", errText);
+      }
+    } catch (error) {
+      console.error("Failed to create notification:", error);
+    }
+
+    window.location.href = "/live-classroom/" + roomId;
   }
 
   function formatDate(dateString) {
@@ -178,7 +219,7 @@ function TrainerDashboard() {
         <button
           className="start-session-btn"
           onClick={function () {
-            handleStartSession(rid);
+            handleStartSession(rid, session.name);
           }}
         >
           Start Session
@@ -227,7 +268,8 @@ function TrainerDashboard() {
           <div
             className="nav-hub-card nav-hub-classroom"
             onClick={function () {
-              navigate("/classroom");
+              var activeSession = window.sessionStorage.getItem("activeSessionId") || "default";
+              navigate("/live-classroom/" + activeSession);
             }}
           >
             <div className="nav-hub-icon">🖥️</div>
@@ -250,9 +292,19 @@ function TrainerDashboard() {
               navigate("/attendance");
             }}
           >
-            <div className="nav-hub-icon">📋</div>
+            <div className="nav-hub-icon">✅</div>
             <div className="nav-hub-label">Attendance</div>
-            <div className="nav-hub-desc">Mark & view attendance</div>
+            <div className="nav-hub-desc">Take & manage attendance</div>
+          </div>
+          <div
+            className="nav-hub-card nav-hub-notifications"
+            onClick={function () {
+              navigate("/notifications");
+            }}
+          >
+            <div className="nav-hub-icon">🔔</div>
+            <div className="nav-hub-label">Notifications</div>
+            <div className="nav-hub-desc">Manage platform notifications</div>
           </div>
           <div
             className="nav-hub-card nav-hub-attendance"

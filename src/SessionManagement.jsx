@@ -1,8 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./SessionManagement.css";
 
 function SessionManagement() {
   var [sessions, setSessions] = useState([]);
+  async function fetchSessions() {
+    try {
+      var token = localStorage.getItem("token");
+      var response = await fetch("http://localhost:5000/api/sessions", {
+        headers: { Authorization: "Bearer " + token },
+      });
+      var data = await response.json();
+      if (data.success) {
+        setSessions(data.sessions);
+      }
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchSessions();
+  }, []);
   var [searchTerm, setSearchTerm] = useState("");
   var [statusFilter, setStatusFilter] = useState("All");
   var [dateFilter, setDateFilter] = useState("");
@@ -44,7 +62,7 @@ function SessionManagement() {
 
   function openEditForm(session) {
     setEditMode(true);
-    setCurrentId(session.id);
+    setCurrentId(session.roomId || session.id);
     setFormName(session.name);
     setFormTrainer(session.trainer);
     setFormDate(session.date);
@@ -59,14 +77,15 @@ function SessionManagement() {
     setShowForm(false);
   }
 
-  function saveSession(e) {
+  async function saveSession(e) {
     e.preventDefault();
     if (editMode === true) {
       var updatedSessions = [];
       for (var i = 0; i < sessions.length; i++) {
-        if (sessions[i].id === currentId) {
+        var idToCheck = sessions[i].id || sessions[i].roomId;
+        if (idToCheck === currentId) {
           var updatedSession = {
-            id: currentId,
+            roomId: currentId,
             name: formName,
             trainer: formTrainer,
             date: formDate,
@@ -81,10 +100,11 @@ function SessionManagement() {
         }
       }
       setSessions(updatedSessions);
+      closeForm();
     } else {
       var newId = "S" + Math.floor(Math.random() * 10000);
       var newSession = {
-        id: newId,
+        roomId: newId,
         name: formName,
         trainer: formTrainer,
         date: formDate,
@@ -94,34 +114,66 @@ function SessionManagement() {
         status: formStatus,
       };
 
-      var allSessions = [];
-      for (var j = 0; j < sessions.length; j++) {
-        allSessions.push(sessions[j]);
+      try {
+        var token = localStorage.getItem("token");
+        var response = await fetch("http://localhost:5000/api/sessions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify(newSession),
+        });
+        var data = await response.json();
+        if (data.success) {
+          setSessions([...sessions, data.session]);
+          closeForm();
+        } else {
+          alert(data.message || "Failed to create session");
+        }
+      } catch (error) {
+        console.error("Error creating session:", error);
+        alert("Failed to create session. Please try again.");
       }
-      allSessions.push(newSession);
-      setSessions(allSessions);
     }
-    closeForm();
   }
 
-  function deleteSession(id) {
+  async function deleteSession(id) {
     var confirmDelete = window.confirm(
       "Are you sure you want to delete this session?",
     );
     if (confirmDelete === true) {
-      var remainingSessions = [];
-      for (var i = 0; i < sessions.length; i++) {
-        if (sessions[i].id !== id) {
-          remainingSessions.push(sessions[i]);
+      try {
+        var token = localStorage.getItem("token");
+        var response = await fetch("http://localhost:5000/api/sessions/" + id, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        var data = await response.json();
+        if (data.success) {
+          var remainingSessions = [];
+          for (var i = 0; i < sessions.length; i++) {
+            var idToCheck = sessions[i].id || sessions[i].roomId;
+            if (idToCheck !== id) {
+              remainingSessions.push(sessions[i]);
+            }
+          }
+          setSessions(remainingSessions);
+        } else {
+          alert(data.message || "Failed to delete session");
         }
+      } catch (error) {
+        console.error("Error deleting session:", error);
+        alert("Failed to delete session. Please try again.");
       }
-      setSessions(remainingSessions);
     }
   }
 
   function joinSession(id) {
     window.sessionStorage.setItem("activeSessionId", id);
-    window.location.href = "/classroom";
+    window.location.href = "/live-classroom/" + id;
   }
   var filteredSessions = [];
   for (var k = 0; k < sessions.length; k++) {
@@ -160,24 +212,24 @@ function SessionManagement() {
         openEditForm(sess);
       };
     })(s);
-
+    var sessionId = s.roomId || s.id;
     var deleteHandler = (function (id) {
       return function () {
         deleteSession(id);
       };
-    })(s.id);
+    })(sessionId);
 
     var joinHandler = (function (id) {
       return function () {
         joinSession(id);
       };
-    })(s.id);
+    })(sessionId);
 
     sessionCards.push(
-      <div className="sm-card" key={s.id}>
+      <div className="sm-card" key={sessionId}>
         <div className="sm-card-header">
           <h3>
-            {s.name} ({s.id})
+            {s.name} ({sessionId})
           </h3>
           <span className={"sm-status " + s.status.toLowerCase()}>
             {s.status}

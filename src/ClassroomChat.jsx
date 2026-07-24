@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-function ClassroomChat() {
+function ClassroomChat({ socket }) {
   var [messages, setMessages] = useState([]);
   var [inputText, setInputText] = useState("");
+  var [canChat, setCanChat] = useState(true);
   var bottomOfFeedRef = useRef(null);
   var loggedInUser = localStorage.getItem("loggedInUser");
   var userData = loggedInUser ? JSON.parse(loggedInUser) : null;
@@ -48,42 +49,77 @@ function ClassroomChat() {
     },
     [messages],
   );
+
+  useEffect(function () {
+    if (!socket) return;
+    
+    var handlePermissions = function (data) {
+      if (data.userId === userEmail && data.permissions) {
+        setCanChat(data.permissions.canChat !== false);
+      }
+    };
+
+    var handleChatMessage = function (msg) {
+      setMessages(function (prev) {
+        // Prevent duplicates
+        if (prev.find(function (m) { return m._id === msg._id; })) return prev;
+        var updated = [];
+        for (var i = 0; i < prev.length; i++) updated.push(prev[i]);
+        updated.push(msg);
+        return updated;
+      });
+    };
+    
+    socket.on("permissions:updated", handlePermissions);
+    socket.on("chat:message", handleChatMessage);
+    
+    return function () {
+      socket.off("permissions:updated", handlePermissions);
+      socket.off("chat:message", handleChatMessage);
+    };
+  }, [socket, userEmail]);
+
   function handleSendMessage() {
+    if (!canChat) return;
     var cleanedText = inputText.trim();
     if (cleanedText === "") {
       return;
     }
 
-    fetch("/api/chat/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + getToken(),
-      },
-      body: JSON.stringify({
-        sessionId: sessionId,
-        message: cleanedText,
-      }),
-    })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
-        if (data.success) {
-          var updated = [];
-          for (var i = 0; i < messages.length; i++) {
-            updated.push(messages[i]);
-          }
-          updated.push(data.data);
-          setMessages(updated);
+    if (socket) {
+      socket.emit("chat:send", { roomId: sessionId, message: cleanedText }, function(res) {
+        if (res.ok) {
           setInputText("");
         } else {
-          alert(data.message);
+          alert(res.error || "Failed to send message");
         }
-      })
-      .catch(function (err) {
-        console.log("Error sending message:", err);
       });
+    } else {
+      fetch("/api/chat/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + getToken(),
+        },
+        body: JSON.stringify({
+          sessionId: sessionId,
+          message: cleanedText,
+        }),
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.success) {
+            setInputText("");
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(function (err) {
+          console.log("Error sending message:", err);
+        });
+    }
   }
   function handleDeleteMessage(messageId) {
     var sure = confirm("Delete this message?");
@@ -171,12 +207,14 @@ function ClassroomChat() {
           value={inputText}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message Here..."
+          placeholder={canChat ? "Type your message Here..." : "Chat has been disabled by the trainer"}
           style={inputStyle}
+          disabled={!canChat}
         />
         <button
           onClick={handleSendMessage}
-          style={sendButtonStyle}
+          style={Object.assign({}, sendButtonStyle, !canChat ? { opacity: 0.5, cursor: "not-allowed" } : {})}
+          disabled={!canChat}
           onMouseEnter={function (e) {
             e.currentTarget.style.backgroundColor = "#1a56a0";
           }}

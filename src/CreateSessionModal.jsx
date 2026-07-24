@@ -27,7 +27,7 @@ function CreateSessionModal(props) {
     var roomId = 'ROOM-' + firstWord + '-' + randomNum;
     return roomId;
   }
-  function handleGenerateMeeting() {
+  async function handleGenerateMeeting() {
     setErrorMessage('');
     if (selectedBatch === '') {
       setErrorMessage('Please select a batch first.');
@@ -45,17 +45,40 @@ function CreateSessionModal(props) {
     var newRoomId = makeRoomId(selectedBatch);
     var newSession = {
       roomId: newRoomId,
-      batchName: selectedBatch,
+      name: selectedBatch,
+      trainer: JSON.parse(localStorage.getItem("loggedInUser")).name || "Trainer",
       date: selectedDate,
       time: selectedTime,
       isNotified: false
     };
-    props.onSessionCreated(newSession);
-    setSelectedBatch('');
-    setSelectedDate('');
-    setSelectedTime('');
-    setErrorMessage('');
-    props.onClose();
+
+    try {
+      var token = localStorage.getItem("token");
+      var response = await fetch("http://localhost:5000/api/sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify(newSession),
+      });
+
+      var data = await response.json();
+      if (!data.success) {
+        setErrorMessage(data.message || "Failed to create session.");
+        return;
+      }
+
+      props.onSessionCreated(data.session || newSession);
+      setSelectedBatch('');
+      setSelectedDate('');
+      setSelectedTime('');
+      setErrorMessage('');
+      props.onClose();
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Error connecting to server.");
+    }
   }
   function handleBackdropClick() {
     props.onClose();

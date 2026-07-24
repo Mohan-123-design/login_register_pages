@@ -1,0 +1,140 @@
+.dashboard-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+.dashboard-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 10px;
+}
+.dashboard-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.notification-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.notification-controls {
+  display: flex;
+  gap: 10px;
+}
+.notification-filter {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.refresh-btn {
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.refresh-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.notification-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.notification-row:hover {
+  background-color: #f9f9f9;
+}
+.unread-row {
+  background-color: #f0f8ff;
+  border-left: 4px solid #0066cc;
+}
+
+.notif-main-info {
+  flex: 2;
+}
+.notif-priority {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #d9534f;
+}
+.notif-title {
+  font-size: 1.1em;
+  color: #333;
+}
+.notif-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  color: #666;
+  font-size: 0.9em;
+}
+.notif-actions {
+  flex: 1;
+  text-align: right;
+}
+.mark-read-btn {
+  padding: 6px 12px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.mark-read-btn:hover {
+  background-color: #4cae4c;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  position: relative;
+}
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+}
+.modal-heading {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+}
+.modal-body-content p {
+  margin: 8px 0;
+}
+.notif-full-message {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}

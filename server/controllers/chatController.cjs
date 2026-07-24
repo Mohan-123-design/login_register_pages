@@ -1,34 +1,20 @@
 var Chat = require("../models/Chat.cjs");
-function sendMessage(req, res) {
-  var sessionId = req.body.sessionId;
-  var message = req.body.message;
-  var messageType = req.body.messageType;
-  var senderId = req.user.email;
-  var senderName = req.user.firstName;
-  if (!sessionId) {
-    return res
-      .status(400)
-      .json({ success: false, message: "sessionId is required." });
-  }
+var roomState = require("../socket/roomState.cjs");
+
+function saveMessage(sessionId, senderId, senderName, message, messageType) {
   if (!message || message.trim() === "") {
-    return res
-      .status(400)
-      .json({ success: false, message: "Message cannot be empty." });
+    return Promise.reject(new Error("Message cannot be empty."));
   }
   if (message.length > 1000) {
-    return res.status(400).json({
-      success: false,
-      message: "Message is too long. Max 1000 characters allowed.",
-    });
+    return Promise.reject(
+      new Error("Message is too long. Max 1000 characters allowed."),
+    );
   }
   if (!messageType) {
     messageType = "Text";
   }
   if (messageType !== "Text" && messageType !== "File") {
-    return res.status(400).json({
-      success: false,
-      message: "messageType must be Text or File.",
-    });
+    return Promise.reject(new Error("messageType must be Text or File."));
   }
 
   var chatData = {
@@ -41,8 +27,35 @@ function sendMessage(req, res) {
   };
 
   var newChat = new Chat(chatData);
-  newChat
-    .save()
+  return newChat.save();
+}
+
+function sendMessage(req, res) {
+  var sessionId = req.body.sessionId;
+  var message = req.body.message;
+  var messageType = req.body.messageType;
+  var senderId = req.user.email;
+  var senderName = req.user.firstName;
+  if (!sessionId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "sessionId is required." });
+  }
+  var perms = roomState.getPermissions(sessionId, senderId);
+  if (perms) {
+    if (perms.canChat === false) {
+      return res.status(403).json({
+        success: false,
+        message: "Chat has been disabled for you by the trainer.",
+      });
+    }
+  } else {
+    console.warn(
+      `[chatController] Warning: No active roomState found for sessionId ${sessionId}, allowing message silently.`,
+    );
+  }
+
+  saveMessage(sessionId, senderId, senderName, message, messageType)
     .then(function (saved) {
       res.json({
         success: true,
@@ -52,9 +65,16 @@ function sendMessage(req, res) {
     })
     .catch(function (err) {
       console.log(err);
+      var isBadRequest =
+        err.message === "Message cannot be empty." ||
+        err.message === "Message is too long. Max 1000 characters allowed." ||
+        err.message === "messageType must be Text or File.";
       res
-        .status(500)
-        .json({ success: false, message: "Could not save message." });
+        .status(isBadRequest ? 400 : 500)
+        .json({
+          success: false,
+          message: isBadRequest ? err.message : "Could not save message.",
+        });
     });
 }
 
@@ -127,6 +147,7 @@ function deleteMessage(req, res) {
 }
 
 module.exports = {
+  saveMessage: saveMessage,
   sendMessage: sendMessage,
   getSessionMessages: getSessionMessages,
   deleteMessage: deleteMessage,

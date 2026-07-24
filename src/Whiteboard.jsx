@@ -2,99 +2,59 @@ import { useState, useRef, useEffect } from "react";
 import "./Whiteboard.css";
 
 function Whiteboard(props) {
-  var boardId = props.id || "1";
-  var dataKey = "whiteboardData_" + boardId;
-  var notesKey = "whiteboardStickyNotes_" + boardId;
-  var currentSessionId = window.sessionStorage.getItem("activeSessionId");
+  let boardId = props.id || "1";
+  let currentSessionId = window.sessionStorage.getItem("activeSessionId");
   if (!currentSessionId) {
     currentSessionId = boardId;
   }
-  var loggedInUser = localStorage.getItem("loggedInUser");
-  var userData = loggedInUser ? JSON.parse(loggedInUser) : null;
-  var userEmail = userData ? userData.email : "";
 
   function getToken() {
     return localStorage.getItem("token");
   }
 
-  var canvasRef = useRef(null);
-  var canvasAreaRef = useRef(null);
-  var historyRef = useRef([]);
-  var historyIndexRef = useRef(-1);
-  var strokesRef = useRef([]);
-  var currentStrokeRef = useRef(null);
-  var [currentTool, setCurrentTool] = useState("pen");
-  var [brushType, setBrushType] = useState("pen");
-  var [thickness, setThickness] = useState(3);
-  var [drawColor, setDrawColor] = useState("#000000");
-  var [isDrawing, setIsDrawing] = useState(false);
-  var [showPenDropdown, setShowPenDropdown] = useState(false);
-  var [showShapesDropdown, setShowShapesDropdown] = useState(false);
-  var [selectedShape, setSelectedShape] = useState("rectangle");
-  var [shapeStartX, setShapeStartX] = useState(0);
-  var [shapeStartY, setShapeStartY] = useState(0);
-  var [canvasSnapshot, setCanvasSnapshot] = useState(null);
-  var [stickyNotes, setStickyNotes] = useState([]);
-  var [selectedStickyColor, setSelectedStickyColor] = useState("#fff9b1");
-  var [textInputVisible, setTextInputVisible] = useState(false);
-  var [textInputX, setTextInputX] = useState(0);
-  var [textInputY, setTextInputY] = useState(0);
-  var [textInputValue, setTextInputValue] = useState("");
-  var [isBold, setIsBold] = useState(false);
-  var [isItalic, setIsItalic] = useState(false);
-  var [isHighlight, setIsHighlight] = useState(false);
-  var stickyColorList = ["#fff9b1", "#ffb3c6", "#b8f5b1", "#b3d9ff"];
+  const canvasRef = useRef(null);
+  const canvasAreaRef = useRef(null);
+  const historyRef = useRef([]);
+  const historyIndexRef = useRef(-1);
+  const strokesRef = useRef([]);
+  const currentStrokeRef = useRef(null);
+  const [currentTool, setCurrentTool] = useState("pen");
+  const [brushType, setBrushType] = useState("pen");
+  const [thickness, setThickness] = useState(3);
+  const [drawColor, setDrawColor] = useState("#000000");
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [showPenDropdown, setShowPenDropdown] = useState(false);
+  const [showShapesDropdown, setShowShapesDropdown] = useState(false);
+  const [selectedShape, setSelectedShape] = useState("rectangle");
+  const [shapeStartX, setShapeStartX] = useState(0);
+  const [shapeStartY, setShapeStartY] = useState(0);
+  const [canvasSnapshot, setCanvasSnapshot] = useState(null);
+  const [stickyNotes, setStickyNotes] = useState([]);
+  const [selectedStickyColor, setSelectedStickyColor] = useState("#fff9b1");
+  const [textInputVisible, setTextInputVisible] = useState(false);
+  const [textInputX, setTextInputX] = useState(0);
+  const [textInputY, setTextInputY] = useState(0);
+  const [textInputValue, setTextInputValue] = useState("");
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isHighlight, setIsHighlight] = useState(false);
+  let stickyColorList = ["#fff9b1", "#ffb3c6", "#b8f5b1", "#b3d9ff"];
 
-  useEffect(function () {
-    var canvas = canvasRef.current;
-    var area = canvasAreaRef.current;
+  useEffect(() => {
+    let canvas = canvasRef.current;
+    let area = canvasAreaRef.current;
     if (canvas && area) {
       canvas.width = area.offsetWidth;
       canvas.height = area.offsetHeight;
-      var ctx = canvas.getContext("2d");
+      let ctx = canvas.getContext("2d");
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      var savedData = localStorage.getItem(dataKey);
-      if (savedData) {
-        var img = new Image();
-        img.onload = function () {
-          ctx.drawImage(img, 0, 0);
-          var firstSnapshot = ctx.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height,
-          );
-          historyRef.current = [firstSnapshot];
-          historyIndexRef.current = 0;
-        };
-        img.src = savedData;
-      } else {
-        var firstSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        historyRef.current = [firstSnapshot];
-        historyIndexRef.current = 0;
-      }
+
+      let firstSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      historyRef.current = [firstSnapshot];
+      historyIndexRef.current = 0;
     }
   }, []);
-
-  useEffect(function () {
-    var savedNotes = localStorage.getItem(notesKey);
-    if (savedNotes) {
-      try {
-        var parsed = JSON.parse(savedNotes);
-        setStickyNotes(parsed);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }, []);
-
-  useEffect(
-    function () {
-      localStorage.setItem(notesKey, JSON.stringify(stickyNotes));
-    },
-    [stickyNotes, notesKey],
-  );
   function replayStroke(ctx, stroke) {
     if (!stroke || !stroke.points || stroke.points.length < 1) {
       return;
@@ -122,7 +82,7 @@ function Whiteboard(props) {
         ctx.globalAlpha = 0.7;
       }
       ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-      for (var p = 1; p < stroke.points.length; p++) {
+      for (let p = 1; p < stroke.points.length; p++) {
         ctx.lineTo(stroke.points[p].x, stroke.points[p].y);
       }
       ctx.stroke();
@@ -131,34 +91,34 @@ function Whiteboard(props) {
     }
 
     if (stroke.tool === "rectangle") {
-      var startPt = stroke.points[0];
-      var endPt = stroke.points[stroke.points.length - 1];
+      let startPt = stroke.points[0];
+      let endPt = stroke.points[stroke.points.length - 1];
       ctx.rect(startPt.x, startPt.y, endPt.x - startPt.x, endPt.y - startPt.y);
       ctx.stroke();
       ctx.closePath();
     }
 
     if (stroke.tool === "circle") {
-      var sp = stroke.points[0];
-      var ep = stroke.points[stroke.points.length - 1];
-      var rx = (ep.x - sp.x) / 2;
-      var ry = (ep.y - sp.y) / 2;
-      var cx = sp.x + rx;
-      var cy = sp.y + ry;
-      var r = Math.sqrt(rx * rx + ry * ry);
+      let sp = stroke.points[0];
+      let ep = stroke.points[stroke.points.length - 1];
+      let rx = (ep.x - sp.x) / 2;
+      let ry = (ep.y - sp.y) / 2;
+      let cx = sp.x + rx;
+      let cy = sp.y + ry;
+      let r = Math.sqrt(rx * rx + ry * ry);
       ctx.arc(cx, cy, r, 0, 2 * Math.PI);
       ctx.stroke();
       ctx.closePath();
     }
 
     if (stroke.tool === "arrow") {
-      var arrowStart = stroke.points[0];
-      var arrowEnd = stroke.points[stroke.points.length - 1];
+      let arrowStart = stroke.points[0];
+      let arrowEnd = stroke.points[stroke.points.length - 1];
       ctx.moveTo(arrowStart.x, arrowStart.y);
       ctx.lineTo(arrowEnd.x, arrowEnd.y);
       ctx.stroke();
-      var arrowLen = 14;
-      var ang = Math.atan2(
+      let arrowLen = 14;
+      let ang = Math.atan2(
         arrowEnd.y - arrowStart.y,
         arrowEnd.x - arrowStart.x,
       );
@@ -176,15 +136,30 @@ function Whiteboard(props) {
       ctx.stroke();
       ctx.closePath();
     }
+
+    if (stroke.tool === "textbox") {
+      let pt = stroke.points[0];
+      ctx.font = stroke.font || "12px sans-serif";
+      if (stroke.isHighlight) {
+        let textWidth = ctx.measureText(stroke.text).width;
+        ctx.fillStyle = "#ffff00";
+        let fontSize = stroke.strokeWidth * 4;
+        ctx.fillRect(
+          pt.x - 2,
+          pt.y - fontSize + 6,
+          textWidth + 4,
+          fontSize + 4,
+        );
+      }
+      ctx.fillStyle = stroke.color;
+      ctx.fillText(stroke.text, pt.x, pt.y);
+    }
   }
-  useEffect(function () {
-    if (!currentSessionId) {
-      return;
-    }
-    var token = getToken();
-    if (!token) {
-      return;
-    }
+  useEffect(() => {
+    if (!currentSessionId) return;
+    let token = getToken();
+    if (!token) return;
+
     fetch("/api/whiteboard/" + currentSessionId, {
       method: "GET",
       headers: {
@@ -192,111 +167,98 @@ function Whiteboard(props) {
         Authorization: "Bearer " + token,
       },
     })
-      .then(function (response) {
+      .then((response) => {
         return response.json();
       })
-      .then(function (data) {
-        if (data.success && data.data && data.data.length > 0) {
-          var lastEntry = data.data[data.data.length - 1];
-          var savedStrokes = lastEntry.drawingData;
-          if (
-            savedStrokes &&
-            savedStrokes.strokes &&
-            savedStrokes.strokes.length > 0
-          ) {
-            var canvas = canvasRef.current;
-            if (canvas) {
-              var ctx = canvas.getContext("2d");
-              for (var s = 0; s < savedStrokes.strokes.length; s++) {
-                replayStroke(ctx, savedStrokes.strokes[s]);
+      .then((data) => {
+        if (data.success && data.data) {
+          let strokes = data.data.strokes || [];
+          let stickies = data.data.stickies || [];
+
+          setStickyNotes(stickies);
+
+          let canvas = canvasRef.current;
+          if (canvas) {
+            let ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let validStrokes = [];
+            for (let i = 0; i < strokes.length; i++) {
+              if (strokes[i].drawingData) {
+                replayStroke(ctx, strokes[i].drawingData);
+                validStrokes.push(strokes[i].drawingData);
               }
-              strokesRef.current = savedStrokes.strokes;
-              saveCanvasToStorage();
-              saveToHistory();
             }
+            strokesRef.current = validStrokes;
+            saveToHistory();
           }
         }
       })
-      .catch(function (err) {
+      .catch((err) => {
         console.log("could not load saved whiteboard data", err);
       });
-  }, []);
+  }, [currentSessionId]);
 
-  function saveCanvasToStorage() {
-    var canvas = canvasRef.current;
-    if (canvas) {
-      var dataUrl = canvas.toDataURL();
-      localStorage.setItem(dataKey, dataUrl);
-    }
-  }
-  function saveToBackend() {
-    if (!currentSessionId) {
-      alert("No session id found. Please join a session first.");
-      return;
-    }
-    var token = getToken();
-    if (!token) {
-      alert("You are not logged in. Please login first.");
-      return;
-    }
-    saveCanvasToStorage();
-    var allStrokes = strokesRef.current;
-    if (allStrokes.length === 0) {
-      alert("Nothing to save - draw something first!");
-      return;
-    }
-    var backendToolType = "Pen";
-    if (currentTool === "eraser") {
-      backendToolType = "Eraser";
-    } else if (
-      currentTool === "rectangle" ||
-      currentTool === "circle" ||
-      currentTool === "arrow"
-    ) {
-      backendToolType = "Shape";
-    } else if (currentTool === "textbox") {
-      backendToolType = "Text";
-    }
-    var bodyData = {
-      sessionId: currentSessionId,
-      drawingData: { strokes: allStrokes },
-      toolType: backendToolType,
-      color: drawColor,
-      strokeWidth: thickness,
+  useEffect(() => {
+    let sock = props.socketRef && props.socketRef.current;
+    if (!sock) return;
+
+    const handleStroke = (stroke) => {
+      if (!stroke) return;
+      let canvas = canvasRef.current;
+      if (canvas) {
+        let ctx = canvas.getContext("2d");
+        replayStroke(ctx, stroke);
+        strokesRef.current.push(stroke);
+        saveToHistory();
+      }
     };
 
-    fetch("/api/whiteboard/save", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify(bodyData),
-    })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
-        if (data.success) {
-          alert("Whiteboard saved successfully!");
-        } else {
-          alert("Could not save: " + data.message);
-        }
-      })
-      .catch(function (err) {
-        console.log("Error saving whiteboard:", err);
-        alert("Error saving whiteboard. Check console for details.");
-      });
+    const handleSticky = (data) => {
+      if (!data) return;
+      if (data.action === "add") {
+        setStickyNotes((prev) => [...prev, data.sticky]);
+      } else if (data.action === "update") {
+        setStickyNotes((prev) =>
+          prev.map((note) =>
+            note.id === data.sticky.noteId || note.noteId === data.sticky.noteId
+              ? { ...note, ...data.sticky }
+              : note,
+          ),
+        );
+      } else if (data.action === "remove") {
+        setStickyNotes((prev) =>
+          prev.filter(
+            (note) => note.id !== data.noteId && note.noteId !== data.noteId,
+          ),
+        );
+      }
+    };
+
+    sock.on("whiteboard:stroke", handleStroke);
+    sock.on("whiteboard:sticky", handleSticky);
+
+    return function () {
+      sock.off("whiteboard:stroke", handleStroke);
+      sock.off("whiteboard:sticky", handleSticky);
+    };
+  }, [props.socketRef]);
+
+  function saveToBackend() {
+    alert(
+      "Saving is now real-time and automatic! You don't need to save manually.",
+    );
   }
 
   function saveToHistory() {
-    var canvas = canvasRef.current;
+    let canvas = canvasRef.current;
     if (canvas) {
-      var ctx = canvas.getContext("2d");
-      var snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      var currentIndex = historyIndexRef.current;
-      var newHistory = [];
-      for (var i = 0; i <= currentIndex; i++) {
+      let ctx = canvas.getContext("2d");
+      let snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let currentIndex = historyIndexRef.current;
+      let newHistory = [];
+      for (let i = 0; i <= currentIndex; i++) {
         newHistory.push(historyRef.current[i]);
       }
       newHistory.push(snapshot);
@@ -309,31 +271,29 @@ function Whiteboard(props) {
   }
 
   function handleUndo() {
-    var currentIndex = historyIndexRef.current;
+    let currentIndex = historyIndexRef.current;
     if (currentIndex > 0) {
       currentIndex = currentIndex - 1;
       historyIndexRef.current = currentIndex;
-      var canvas = canvasRef.current;
-      var ctx = canvas.getContext("2d");
+      let canvas = canvasRef.current;
+      let ctx = canvas.getContext("2d");
       ctx.putImageData(historyRef.current[currentIndex], 0, 0);
-      saveCanvasToStorage();
     }
   }
 
   function handleRedo() {
-    var currentIndex = historyIndexRef.current;
+    let currentIndex = historyIndexRef.current;
     if (currentIndex < historyRef.current.length - 1) {
       currentIndex = currentIndex + 1;
       historyIndexRef.current = currentIndex;
-      var canvas = canvasRef.current;
-      var ctx = canvas.getContext("2d");
+      let canvas = canvasRef.current;
+      let ctx = canvas.getContext("2d");
       ctx.putImageData(historyRef.current[currentIndex], 0, 0);
-      saveCanvasToStorage();
     }
   }
 
   function getBrushSettings() {
-    var settings = {};
+    let settings = {};
     if (brushType === "pen") {
       settings.lineWidth = thickness;
       settings.globalAlpha = 1.0;
@@ -355,30 +315,34 @@ function Whiteboard(props) {
   }
 
   function handleMouseDown(e) {
-    var canvas = canvasRef.current;
-    var rect = canvas.getBoundingClientRect();
-    var mouseX = e.clientX - rect.left;
-    var mouseY = e.clientY - rect.top;
+    let canvas = canvasRef.current;
+    let rect = canvas.getBoundingClientRect();
+    let mouseX = e.clientX - rect.left;
+    let mouseY = e.clientY - rect.top;
 
     if (currentTool === "sticky") {
-      var newNote = {
+      let newNote = {
         id: Date.now(),
         x: mouseX,
         y: mouseY,
         color: selectedStickyColor,
         text: "",
       };
-      var updatedNotes = [];
-      for (var i = 0; i < stickyNotes.length; i++) {
+      let updatedNotes = [];
+      for (let i = 0; i < stickyNotes.length; i++) {
         updatedNotes.push(stickyNotes[i]);
       }
       updatedNotes.push(newNote);
       setStickyNotes(updatedNotes);
+      let sock = props.socketRef && props.socketRef.current;
+      if (sock) {
+        sock.emit("whiteboard:sticky", { action: "add", sticky: newNote });
+      }
       return;
     }
 
     if (currentTool === "textbox") {
-      setTimeout(function () {
+      setTimeout(() => {
         setTextInputX(mouseX);
         setTextInputY(mouseY);
         setTextInputValue("");
@@ -388,7 +352,7 @@ function Whiteboard(props) {
     }
 
     setIsDrawing(true);
-    var ctx = canvas.getContext("2d");
+    let ctx = canvas.getContext("2d");
     currentStrokeRef.current = {
       tool: currentTool,
       color: drawColor,
@@ -404,12 +368,12 @@ function Whiteboard(props) {
     ) {
       setShapeStartX(mouseX);
       setShapeStartY(mouseY);
-      var snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
       setCanvasSnapshot(snapshot);
       return;
     }
 
-    var brushSettings = getBrushSettings();
+    let brushSettings = getBrushSettings();
     ctx.globalAlpha = brushSettings.globalAlpha;
     ctx.lineWidth = brushSettings.lineWidth;
     ctx.lineCap = brushSettings.lineCap;
@@ -432,11 +396,11 @@ function Whiteboard(props) {
       return;
     }
 
-    var canvas = canvasRef.current;
-    var ctx = canvas.getContext("2d");
-    var rect = canvas.getBoundingClientRect();
-    var mouseX = e.clientX - rect.left;
-    var mouseY = e.clientY - rect.top;
+    let canvas = canvasRef.current;
+    let ctx = canvas.getContext("2d");
+    let rect = canvas.getBoundingClientRect();
+    let mouseX = e.clientX - rect.left;
+    let mouseY = e.clientY - rect.top;
 
     if (
       currentTool === "rectangle" ||
@@ -452,19 +416,19 @@ function Whiteboard(props) {
       ctx.lineCap = "round";
 
       if (currentTool === "rectangle") {
-        var rectWidth = mouseX - shapeStartX;
-        var rectHeight = mouseY - shapeStartY;
+        let rectWidth = mouseX - shapeStartX;
+        let rectHeight = mouseY - shapeStartY;
         ctx.beginPath();
         ctx.rect(shapeStartX, shapeStartY, rectWidth, rectHeight);
         ctx.stroke();
       }
 
       if (currentTool === "circle") {
-        var radiusX = (mouseX - shapeStartX) / 2;
-        var radiusY = (mouseY - shapeStartY) / 2;
-        var centerX = shapeStartX + radiusX;
-        var centerY = shapeStartY + radiusY;
-        var radius = Math.sqrt(radiusX * radiusX + radiusY * radiusY);
+        let radiusX = (mouseX - shapeStartX) / 2;
+        let radiusY = (mouseY - shapeStartY) / 2;
+        let centerX = shapeStartX + radiusX;
+        let centerY = shapeStartY + radiusY;
+        let radius = Math.sqrt(radiusX * radiusX + radiusY * radiusY);
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         ctx.stroke();
@@ -475,8 +439,8 @@ function Whiteboard(props) {
         ctx.moveTo(shapeStartX, shapeStartY);
         ctx.lineTo(mouseX, mouseY);
         ctx.stroke();
-        var arrowLength = 14;
-        var angle = Math.atan2(mouseY - shapeStartY, mouseX - shapeStartX);
+        let arrowLength = 14;
+        let angle = Math.atan2(mouseY - shapeStartY, mouseX - shapeStartX);
         ctx.beginPath();
         ctx.moveTo(mouseX, mouseY);
         ctx.lineTo(
@@ -502,12 +466,12 @@ function Whiteboard(props) {
   function handleMouseUp(e) {
     if (isDrawing) {
       setIsDrawing(false);
-      var canvas = canvasRef.current;
-      var ctx = canvas.getContext("2d");
+      let canvas = canvasRef.current;
+      let ctx = canvas.getContext("2d");
       if (currentStrokeRef.current && e) {
-        var rect = canvas.getBoundingClientRect();
-        var endX = e.clientX - rect.left;
-        var endY = e.clientY - rect.top;
+        let rect = canvas.getBoundingClientRect();
+        let endX = e.clientX - rect.left;
+        let endY = e.clientY - rect.top;
         if (
           currentStrokeRef.current.tool === "rectangle" ||
           currentStrokeRef.current.tool === "circle" ||
@@ -521,13 +485,16 @@ function Whiteboard(props) {
         currentStrokeRef.current.points.length > 0
       ) {
         strokesRef.current.push(currentStrokeRef.current);
+        let sock = props.socketRef && props.socketRef.current;
+        if (sock) {
+          sock.emit("whiteboard:stroke", currentStrokeRef.current);
+        }
       }
       currentStrokeRef.current = null;
 
       ctx.closePath();
       ctx.globalAlpha = 1.0;
       setCanvasSnapshot(null);
-      saveCanvasToStorage();
       saveToHistory();
     }
   }
@@ -540,12 +507,11 @@ function Whiteboard(props) {
   }
 
   function handleClearCanvas() {
-    var canvas = canvasRef.current;
+    let canvas = canvasRef.current;
     if (canvas) {
-      var ctx = canvas.getContext("2d");
+      let ctx = canvas.getContext("2d");
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      saveCanvasToStorage();
       saveToHistory();
       setStickyNotes([]);
       strokesRef.current = [];
@@ -554,24 +520,25 @@ function Whiteboard(props) {
   }
 
   function removeStickyNote(noteId) {
-    var remaining = [];
-    for (var i = 0; i < stickyNotes.length; i++) {
+    let remaining = [];
+    for (let i = 0; i < stickyNotes.length; i++) {
       if (stickyNotes[i].id !== noteId) {
         remaining.push(stickyNotes[i]);
       }
     }
     setStickyNotes(remaining);
+    let sock = props.socketRef && props.socketRef.current;
+    if (sock) {
+      sock.emit("whiteboard:sticky", { action: "remove", noteId: noteId });
+    }
   }
 
   function updateStickyText(noteId, newText) {
-    var updated = [];
-    for (var i = 0; i < stickyNotes.length; i++) {
-      if (stickyNotes[i].id === noteId) {
-        var copy = {
-          id: stickyNotes[i].id,
-          x: stickyNotes[i].x,
-          y: stickyNotes[i].y,
-          color: stickyNotes[i].color,
+    let updated = [];
+    for (let i = 0; i < stickyNotes.length; i++) {
+      if (stickyNotes[i].id === noteId || stickyNotes[i].noteId === noteId) {
+        let copy = {
+          ...stickyNotes[i],
           text: newText,
         };
         updated.push(copy);
@@ -580,6 +547,16 @@ function Whiteboard(props) {
       }
     }
     setStickyNotes(updated);
+  }
+
+  function handleStickyBlur(noteId) {
+    let note = stickyNotes.find((n) => n.id === noteId || n.noteId === noteId);
+    if (note) {
+      let sock = props.socketRef && props.socketRef.current;
+      if (sock) {
+        sock.emit("whiteboard:sticky", { action: "update", sticky: note });
+      }
+    }
   }
 
   function selectBrushType(type) {
@@ -645,14 +622,14 @@ function Whiteboard(props) {
   }
 
   function handleThicknessChange(e) {
-    var val = Number(e.target.value);
+    let val = Number(e.target.value);
     if (val < 1) val = 1;
     if (val > 50) val = 50;
     setThickness(val);
   }
 
   function buildFontString() {
-    var fontStyle = "";
+    let fontStyle = "";
     if (isItalic) {
       fontStyle = fontStyle + "italic ";
     }
@@ -685,7 +662,7 @@ function Whiteboard(props) {
                   "dropdown-item" +
                   (brushType === "pen" ? " selected-item" : "")
                 }
-                onClick={function () {
+                onClick={() => {
                   selectBrushType("pen");
                 }}
               >
@@ -696,7 +673,7 @@ function Whiteboard(props) {
                   "dropdown-item" +
                   (brushType === "pencil" ? " selected-item" : "")
                 }
-                onClick={function () {
+                onClick={() => {
                   selectBrushType("pencil");
                 }}
               >
@@ -707,7 +684,7 @@ function Whiteboard(props) {
                   "dropdown-item" +
                   (brushType === "brush" ? " selected-item" : "")
                 }
-                onClick={function () {
+                onClick={() => {
                   selectBrushType("brush");
                 }}
               >
@@ -720,7 +697,7 @@ function Whiteboard(props) {
           className={
             "tool-button" + (isToolActive("eraser") ? " active-tool" : "")
           }
-          onClick={function () {
+          onClick={() => {
             setCurrentTool("eraser");
             setShowPenDropdown(false);
             setShowShapesDropdown(false);
@@ -744,7 +721,7 @@ function Whiteboard(props) {
                   "dropdown-item" +
                   (selectedShape === "rectangle" ? " selected-item" : "")
                 }
-                onClick={function () {
+                onClick={() => {
                   selectShape("rectangle");
                 }}
               >
@@ -755,7 +732,7 @@ function Whiteboard(props) {
                   "dropdown-item" +
                   (selectedShape === "circle" ? " selected-item" : "")
                 }
-                onClick={function () {
+                onClick={() => {
                   selectShape("circle");
                 }}
               >
@@ -766,7 +743,7 @@ function Whiteboard(props) {
                   "dropdown-item" +
                   (selectedShape === "arrow" ? " selected-item" : "")
                 }
-                onClick={function () {
+                onClick={() => {
                   selectShape("arrow");
                 }}
               >
@@ -777,7 +754,7 @@ function Whiteboard(props) {
                   "dropdown-item" +
                   (selectedShape === "textbox" ? " selected-item" : "")
                 }
-                onClick={function () {
+                onClick={() => {
                   selectShape("textbox");
                 }}
               >
@@ -790,7 +767,7 @@ function Whiteboard(props) {
           className={
             "tool-button" + (isToolActive("sticky") ? " active-tool" : "")
           }
-          onClick={function () {
+          onClick={() => {
             setCurrentTool("sticky");
             setShowPenDropdown(false);
             setShowShapesDropdown(false);
@@ -801,7 +778,7 @@ function Whiteboard(props) {
         </button>
         {currentTool === "sticky" && (
           <div className="sticky-colors">
-            {stickyColorList.map(function (color, index) {
+            {stickyColorList.map((color, index) => {
               return (
                 <div
                   key={index}
@@ -810,7 +787,7 @@ function Whiteboard(props) {
                     (selectedStickyColor === color ? " selected-sticky" : "")
                   }
                   style={{ backgroundColor: color }}
-                  onClick={function () {
+                  onClick={() => {
                     setSelectedStickyColor(color);
                   }}
                 ></div>
@@ -840,7 +817,7 @@ function Whiteboard(props) {
           className={
             "tool-button font-style-btn" + (isBold ? " active-tool" : "")
           }
-          onClick={function () {
+          onClick={() => {
             setIsBold(!isBold);
           }}
           title="Bold"
@@ -851,7 +828,7 @@ function Whiteboard(props) {
           className={
             "tool-button font-style-btn" + (isItalic ? " active-tool" : "")
           }
-          onClick={function () {
+          onClick={() => {
             setIsItalic(!isItalic);
           }}
           title="Italic"
@@ -862,7 +839,7 @@ function Whiteboard(props) {
           className={
             "tool-button font-style-btn" + (isHighlight ? " active-tool" : "")
           }
-          onClick={function () {
+          onClick={() => {
             setIsHighlight(!isHighlight);
           }}
           title="Highlight"
@@ -900,7 +877,7 @@ function Whiteboard(props) {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         ></canvas>
-        {stickyNotes.map(function (note) {
+        {stickyNotes.map((note) => {
           return (
             <div
               key={note.id}
@@ -913,7 +890,7 @@ function Whiteboard(props) {
             >
               <button
                 className="sticky-note-close"
-                onClick={function () {
+                onClick={() => {
                   removeStickyNote(note.id);
                 }}
               >
@@ -923,8 +900,11 @@ function Whiteboard(props) {
                 className="sticky-note-text"
                 value={note.text}
                 placeholder="Type note..."
-                onChange={function (e) {
-                  updateStickyText(note.id, e.target.value);
+                onChange={(e) => {
+                  updateStickyText(note.id || note.noteId, e.target.value);
+                }}
+                onBlur={() => {
+                  handleStickyBlur(note.id || note.noteId);
                 }}
               ></textarea>
             </div>
@@ -938,19 +918,19 @@ function Whiteboard(props) {
             value={textInputValue}
             autoFocus
             placeholder="Type text & press Enter"
-            onChange={function (e) {
+            onChange={(e) => {
               setTextInputValue(e.target.value);
             }}
             onKeyDown={handleTextSubmit}
-            onBlur={function () {
+            onBlur={() => {
               if (textInputValue.trim() !== "") {
-                var canvas = canvasRef.current;
-                var ctx = canvas.getContext("2d");
-                var fontSize = thickness * 4;
+                let canvas = canvasRef.current;
+                let ctx = canvas.getContext("2d");
+                let fontSize = thickness * 4;
                 ctx.font = buildFontString();
                 ctx.globalAlpha = 1.0;
                 if (isHighlight) {
-                  var textWidth = ctx.measureText(textInputValue).width;
+                  let textWidth = ctx.measureText(textInputValue).width;
                   ctx.fillStyle = "#ffff00";
                   ctx.fillRect(
                     textInputX - 2,
@@ -961,7 +941,23 @@ function Whiteboard(props) {
                 }
                 ctx.fillStyle = drawColor;
                 ctx.fillText(textInputValue, textInputX, textInputY + 16);
-                saveCanvasToStorage();
+
+                let newTextStroke = {
+                  tool: "textbox",
+                  color: drawColor,
+                  strokeWidth: thickness,
+                  brushType: "pen",
+                  points: [{ x: textInputX, y: textInputY + 16 }],
+                  text: textInputValue,
+                  isHighlight: isHighlight,
+                  font: ctx.font,
+                };
+                strokesRef.current.push(newTextStroke);
+                let sock = props.socketRef && props.socketRef.current;
+                if (sock) {
+                  sock.emit("whiteboard:stroke", newTextStroke);
+                }
+
                 saveToHistory();
               }
               setTextInputVisible(false);

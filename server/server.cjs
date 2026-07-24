@@ -1,8 +1,11 @@
 var express = require("express");
+var http = require("http");
 var mongoose = require("mongoose");
 var cors = require("cors");
 var jwt = require("jsonwebtoken");
+var attachSocket = require("./socket/index.cjs");
 var app = express();
+var server = http.createServer(app);
 var JWT_SECRET = "aieducation-secret-key";
 
 app.use(cors());
@@ -240,6 +243,22 @@ app.use(
   require("./routes/whiteboardRoutes.cjs")(verifyToken, checkRole),
 );
 
-app.listen(5000, function () {
+app.use(
+  "/api/activity-logs",
+  require("./routes/activityLogRoutes.cjs")(verifyToken, checkRole),
+);
+
+app.use(
+  "/api/sessions",
+  require("./routes/sessionRoutes.cjs")(verifyToken, checkRole),
+);
+
+app.use(
+  "/api/notifications",
+  require("./routes/notificationRoutes.cjs")(verifyToken, checkRole),
+);
+attachSocket(server);
+
+server.listen(5000, function () {
   console.log("Server is running on port 5000");
 });

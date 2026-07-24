@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import "./DigitalClassroom.css";
 import Whiteboard from "./Whiteboard";
 import ClassroomChat from "./ClassroomChat";
+import { getSocket } from "./live-classroom/socket.js";
 
 function DigitalClassroom() {
   var [whiteboards, setWhiteboards] = useState(["1"]);
+  var [socket, setSocket] = useState(null);
   var leftSectionRef = React.useRef(null);
 
   function addWhiteboard() {
@@ -27,6 +29,16 @@ function DigitalClassroom() {
     },
     [whiteboards],
   );
+
+  var sessionId = window.sessionStorage.getItem("activeSessionId");
+  
+  React.useEffect(function () {
+    var token = localStorage.getItem("token");
+    if (sessionId && token) {
+      var s = getSocket(sessionId, token);
+      setSocket(s);
+    }
+  }, [sessionId]);
 
   var loggedInUser = localStorage.getItem("loggedInUser");
   if (loggedInUser === null) {
@@ -86,7 +98,7 @@ function DigitalClassroom() {
         })}
       </div>
       <div className="classroom-right-section">
-        <ClassroomChat />
+        <ClassroomChat socket={socket} />
       </div>
     </div>
   );

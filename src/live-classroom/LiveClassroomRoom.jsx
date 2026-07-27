@@ -11,6 +11,7 @@ import NotificationToast from "./NotificationToast.jsx";
 import useClassroomNotifications from "./useClassroomNotifications.js";
 import useMedia from "./useMedia.js";
 import useScreenShare from "./useScreenShare.js";
+import useCameraStreams from "./usecamerastreams.js";
 import Whiteboard from "../Whiteboard.jsx";
 import ClassroomChat from "../ClassroomChat.jsx";
 import "./LiveClassroomRoom.css";
@@ -339,6 +340,13 @@ function LiveClassroomRoom() {
     roomId,
     userData.email,
     participants,
+  );
+  var cameraStreams = useCameraStreams(
+    socketRef.current,
+    roomId,
+    userData.email,
+    participants,
+    media,
   );
   useClassroomNotifications(socketRef, isTrainer);
   useEffect(
@@ -828,25 +836,52 @@ function LiveClassroomRoom() {
                           }}
                         >
                           {id === userData.email && media.videoStream ? (
-                            <video
-                              autoPlay
-                              playsInline
-                              muted
-                              ref={function (el) {
-                                if (el && el.srcObject !== media.videoStream) {
-                                  el.srcObject = media.videoStream;
-                                }
-                              }}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                transform: "scaleX(-1)",
-                              }}
-                            />
-                          ) : (
-                            <span style={{ color: "#fff" }}>Video Active</span>
-                          )}
+  <video
+    autoPlay
+    playsInline
+    muted
+    ref={function (el) {
+      if (el && el.srcObject !== media.videoStream) {
+        el.srcObject = media.videoStream;
+      }
+    }}
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      transform: "scaleX(-1)",
+    }}
+  />
+) : id !== userData.email && cameraStreams.remoteStreams[id] ? (
+  <video
+    autoPlay
+    playsInline
+    ref={function (el) {
+      var stream = cameraStreams.remoteStreams[id];
+      if (el && el.srcObject !== stream) {
+        el.srcObject = stream;
+      }
+    }}
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+    }}
+  />
+) : (
+  <span style={{ color: "#fff" }}>Video Active</span>
+)}
+{id !== userData.email && !p.camera && cameraStreams.remoteStreams[id] && (
+  <audio
+    autoPlay
+    ref={function (el) {
+      var stream = cameraStreams.remoteStreams[id];
+      if (el && el.srcObject !== stream) {
+        el.srcObject = stream;
+      }
+    }}
+  />
+)}
                         </div>
                       )}
                       <div className="lcr-tile-label">

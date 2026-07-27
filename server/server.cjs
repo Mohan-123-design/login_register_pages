@@ -252,7 +252,10 @@ app.use(
   "/api/sessions",
   require("./routes/sessionRoutes.cjs")(verifyToken, checkRole),
 );
-
+app.use(
+  "/api/feedback",
+  require("./routes/feedbackroutes.cjs")(verifyToken, checkRole),
+);
 app.use(
   "/api/notifications",
   require("./routes/notificationRoutes.cjs")(verifyToken, checkRole),

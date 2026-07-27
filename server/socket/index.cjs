@@ -633,6 +633,56 @@ function attachSocket(httpServer) {
         }
       }
     });
+    socket.on("webrtc:cam:offer", function (data) {
+      var roomId = (data && data.roomId) || socket.data.roomId;
+      var targetUserId = data && data.targetUserId;
+      if (!roomId || !targetUserId) return;
+      var room = roomState.getRoom(roomId);
+      if (room) {
+        var targetParticipant = room.participants.get(targetUserId);
+        if (targetParticipant && targetParticipant.socketId) {
+          classroom.to(targetParticipant.socketId).emit("webrtc:cam:offer", {
+            roomId: roomId,
+            senderId: socket.data.userId,
+            sdp: data.sdp,
+          });
+        }
+      }
+    });
+    socket.on("webrtc:cam:answer", function (data) {
+      var roomId = (data && data.roomId) || socket.data.roomId;
+      var targetUserId = data && data.targetUserId;
+      if (!roomId || !targetUserId) return;
+      var room = roomState.getRoom(roomId);
+      if (room) {
+        var targetParticipant = room.participants.get(targetUserId);
+        if (targetParticipant && targetParticipant.socketId) {
+          classroom.to(targetParticipant.socketId).emit("webrtc:cam:answer", {
+            roomId: roomId,
+            senderId: socket.data.userId,
+            sdp: data.sdp,
+          });
+        }
+      }
+    });
+    socket.on("webrtc:cam:ice-candidate", function (data) {
+      var roomId = (data && data.roomId) || socket.data.roomId;
+      var targetUserId = data && data.targetUserId;
+      if (!roomId || !targetUserId) return;
+      var room = roomState.getRoom(roomId);
+      if (room) {
+        var targetParticipant = room.participants.get(targetUserId);
+        if (targetParticipant && targetParticipant.socketId) {
+          classroom
+            .to(targetParticipant.socketId)
+            .emit("webrtc:cam:ice-candidate", {
+              roomId: roomId,
+              senderId: socket.data.userId,
+              candidate: data.candidate,
+            });
+        }
+      }
+    });
     socket.on("hand:raise", function (data, callback) {
       var roomId = (data && data.roomId) || socket.data.roomId;
       if (!roomId) return;

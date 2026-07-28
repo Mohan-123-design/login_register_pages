@@ -155,7 +155,7 @@ function Whiteboard(props) {
       ctx.fillText(stroke.text, pt.x, pt.y);
     }
   }
-  useEffect(() => {
+  function loadWhiteboard() {
     if (!currentSessionId) return;
     let token = getToken();
     if (!token) return;
@@ -198,11 +198,18 @@ function Whiteboard(props) {
       .catch((err) => {
         console.log("could not load saved whiteboard data", err);
       });
+  }
+    useEffect(() => {
+      loadWhiteboard();
   }, [currentSessionId]);
 
   useEffect(() => {
     let sock = props.socketRef && props.socketRef.current;
     if (!sock) return;
+    const handleReconnect = () => {
+      loadWhiteboard();
+    };
+    sock.on("connect", handleReconnect);
 
     const handleStroke = (stroke) => {
       if (!stroke) return;
@@ -240,6 +247,7 @@ function Whiteboard(props) {
     sock.on("whiteboard:sticky", handleSticky);
 
     return function () {
+      sock.off("connect", handleReconnect);
       sock.off("whiteboard:stroke", handleStroke);
       sock.off("whiteboard:sticky", handleSticky);
     };

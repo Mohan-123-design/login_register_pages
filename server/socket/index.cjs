@@ -28,6 +28,43 @@ function attachSocket(httpServer) {
   });
 
   var classroom = io.of("/classroom");
+  /**
+   * Single source of truth for ending a session - used by both the manual
+   * "trainer clicked End Session" path and the automatic "trainer never
+   * reconnected in time" path, so they can never drift apart.
+   * @param {string} roomId
+   * @param {string} reason - "manual" | "trainer_timeout"
+   * @param {{id:string, name:string}} actor - who/what caused the end
+   */
+  function endSession(roomId, reason, actor) {
+    classroom.to("session:" + roomId).emit("session:ended", {
+      roomId: roomId,
+      reason: reason || "manual",
+    });
+    classroom
+      .in("session:" + roomId)
+      .fetchSockets()
+      .then(function (sockets) {
+        for (var i = 0; i < sockets.length; i++) {
+          sockets[i].leave("session:" + roomId);
+          if (isHost(sockets[i])) {
+            sockets[i].leave("session:" + roomId + ":hosts");
+          }
+          sockets[i].disconnect(true);
+        }
+      });
+    roomState.rooms.delete(roomId);
+    console.log(
+      "[classroom] session ended –",
+      roomId,
+      "(reason: " + (reason || "manual") + ")",
+    );
+    if (actor) {
+      activityLogController.createLog(roomId, "session:ended", actor, undefined, {
+        reason: reason || "manual",
+      });
+    }
+  }
   classroom.use(function (socket, next) {
     var token = socket.handshake.auth && socket.handshake.auth.token;
     if (!token) {
@@ -69,6 +106,8 @@ function attachSocket(httpServer) {
         }
         return;
       }
+      var isTrainerReconnecting =
+        currentStatus === "disconnected" && isHost(socket);
       socket.data.roomId = roomId;
       var isNew = !roomState.getRoom(roomId);
       var room = roomState.getOrCreateRoom(roomId);
@@ -129,6 +168,19 @@ function attachSocket(httpServer) {
         id: socket.data.userId,
         name: socket.data.name,
       });
+
+      if (isTrainerReconnecting) {
+        classroom.to("session:" + roomId).emit("trainer:reconnected", {
+          roomId: roomId,
+          trainerId: socket.data.userId,
+          trainerName: socket.data.name,
+        });
+        activityLogController.createLog(roomId, "trainer:reconnected", {
+          id: socket.data.userId,
+          name: socket.data.name,
+        });
+      }
+
       if (typeof callback === "function") {
         callback({ ok: true, room: roomState.serializeRoom(room) });
       }
@@ -184,23 +236,10 @@ function attachSocket(httpServer) {
         }
         return;
       }
-      classroom
-        .to("session:" + roomId)
-        .emit("session:ended", { roomId: roomId });
-      classroom
-        .in("session:" + roomId)
-        .fetchSockets()
-        .then(function (sockets) {
-          for (var i = 0; i < sockets.length; i++) {
-            sockets[i].leave("session:" + roomId);
-            if (isHost(sockets[i])) {
-              sockets[i].leave("session:" + roomId + ":hosts");
-            }
-            sockets[i].disconnect(true);
-          }
-        });
-      roomState.rooms.delete(roomId);
-      console.log("[classroom] session ended –", roomId);
+      endSession(roomId, "manual", {
+        id: socket.data.userId,
+        name: socket.data.name,
+      });
       if (typeof callback === "function") {
         callback({ ok: true });
       }
@@ -1058,6 +1097,13 @@ function attachSocket(httpServer) {
         }
         var status = roomState.getParticipantStatus(roomId, socket.data.userId);
         if (status) {
+          var hostDisconnecting = isHost(socket);
+          var graceMs = hostDisconnecting
+            ? roomState.TRAINER_RECONNECT_GRACE_MS
+            : roomState.RECONNECT_GRACE_MS;
+          var disconnectedTrainerId = socket.data.userId;
+          var disconnectedTrainerName = socket.data.name;
+
           roomState.markDisconnected(
             roomId,
             socket.data.userId,
@@ -1068,13 +1114,29 @@ function attachSocket(httpServer) {
                 "from",
                 rid,
               );
+              if (hostDisconnecting) {
+                activityLogController.createLog(
+                  rid,
+                  "trainer:reconnect-timeout",
+                  { id: uid, name: disconnectedTrainerName },
+                  undefined,
+                  { timeoutMs: graceMs },
+                );
+                endSession(rid, "trainer_timeout", {
+                  id: uid,
+                  name: disconnectedTrainerName,
+                });
+                return;
+              }
               var payload = participantListPayload(rid);
               payload.userId = uid;
               classroom
                 .to("session:" + rid)
                 .emit("participant:removed", payload);
             },
+            graceMs,
           );
+
           var payload = participantListPayload(roomId);
           payload.userId = socket.data.userId;
           payload.name = socket.data.name;
@@ -1083,6 +1145,23 @@ function attachSocket(httpServer) {
             id: socket.data.userId,
             name: socket.data.name,
           });
+
+          if (hostDisconnecting) {
+            classroom.to("session:" + roomId).emit("trainer:disconnected", {
+              roomId: roomId,
+              trainerId: disconnectedTrainerId,
+              trainerName: disconnectedTrainerName,
+              timeoutMs: graceMs,
+              disconnectedAt: new Date(),
+            });
+            activityLogController.createLog(
+              roomId,
+              "trainer:disconnected",
+              { id: disconnectedTrainerId, name: disconnectedTrainerName },
+              undefined,
+              { timeoutMs: graceMs },
+            );
+          }
         }
       }
     });

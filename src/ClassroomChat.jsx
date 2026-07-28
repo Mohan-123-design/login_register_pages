@@ -69,15 +69,20 @@ function ClassroomChat({ socket }) {
         return updated;
       });
     };
+    var handleReconnect = function () {
+      if (sessionId) loadMessages();
+    }
     
     socket.on("permissions:updated", handlePermissions);
     socket.on("chat:message", handleChatMessage);
+    socket.on("connect", handleReconnect);
     
     return function () {
       socket.off("permissions:updated", handlePermissions);
       socket.off("chat:message", handleChatMessage);
+      socket.off("connect", handleReconnect);
     };
-  }, [socket, userEmail]);
+  }, [socket, userEmail, sessionId]);
 
   function handleSendMessage() {
     if (!canChat) return;

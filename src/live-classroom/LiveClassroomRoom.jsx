@@ -332,6 +332,7 @@ function LiveClassroomRoom() {
   var [isWaiting, setIsWaiting] = useState(false);
   var [waitingRoomList, setWaitingRoomList] = useState([]);
   var [waitingRoomEnabled, setWaitingRoomEnabled] = useState(true);
+  var [trainerBanner, setTrainerBanner] = useState(null);
   var socketRef = useRef(null);
   var timerRef = useRef(null);
   var media = useMedia();
@@ -579,8 +580,26 @@ function LiveClassroomRoom() {
       sock.on("session:waitingRoomToggled", function (data) {
         setWaitingRoomEnabled(data.enabled);
       });
-      sock.on("session:ended", function () {
+
+      sock.on("trainer:disconnected", function (data) {
+        if (isTrainer) return;
+        setTrainerBanner({
+          trainerName: data.trainerName,
+          deadline: Date.now() + (data.timeoutMs || 0),
+        });
+      });
+
+      sock.on("trainer:reconnected", function () {
+        setTrainerBanner(null);
+      });
+
+      sock.on("session:ended", function (data) {
         disconnectSocket();
+        if (data && data.reason === "trainer_timeout") {
+          window.alert(
+            "This session was ended because the trainer did not reconnect in time.",
+          );
+        }
         navigate("/dashboard");
       });
 
@@ -613,6 +632,8 @@ function LiveClassroomRoom() {
         sock.off("session:locked");
         sock.off("session:unlocked");
         sock.off("session:waitingRoomToggled");
+        sock.off("trainer:disconnected");
+        sock.off("trainer:reconnected");
         sock.off("session:ended");
         clearInterval(timerRef.current);
         disconnectSocket();
@@ -770,6 +791,28 @@ function LiveClassroomRoom() {
             </div>
           </div>
         </div>
+        {trainerBanner && (
+          <div
+            style={{
+              background: "#fef3c7",
+              color: "#92400e",
+              padding: "8px 16px",
+              textAlign: "center",
+              fontSize: 14,
+              fontWeight: 500,
+              borderBottom: "1px solid #fcd34d",
+            }}
+          >
+            {trainerBanner.trainerName} disconnected — waiting for them to
+            reconnect (up to{" "}
+            {Math.max(
+              0,
+              Math.ceil((trainerBanner.deadline - Date.now()) / 1000),
+            )}
+            s). The session will end automatically if they dont return in
+            time.
+          </div>
+        )}
         <div
           style={{
             display: "flex",

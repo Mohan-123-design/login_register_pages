@@ -1,6 +1,7 @@
 var rooms = new Map();
 var disconnectTimers = new Map();
 var RECONNECT_GRACE_MS = 30000;
+var trainer_reconnect_timeout_ms = 120000;
 function defaultPermissions(role) {
   if (role === "Trainer" || role === "Admin") {
     return {
@@ -117,7 +118,7 @@ function addParticipant(roomId, userId, name, role, socketId) {
   });
   return room;
 }
-function markDisconnected(roomId, userId, onGraceExpired) {
+function markDisconnected(roomId, userId, onGraceExpired, graceMs) {
   var room = rooms.get(roomId);
   if (!room) return;
   var participant = room.participants.get(userId);
@@ -125,6 +126,8 @@ function markDisconnected(roomId, userId, onGraceExpired) {
 
   participant.status = "disconnected";
   participant.socketId = null;
+  participant.disconnectedAt = new Date();
+
 
   var timerKey = roomId + ":" + userId;
   if (disconnectTimers.has(timerKey)) {
@@ -142,7 +145,7 @@ function markDisconnected(roomId, userId, onGraceExpired) {
         onGraceExpired(roomId, userId);
       }
     }
-  }, RECONNECT_GRACE_MS);
+  }, graceMs ||RECONNECT_GRACE_MS);
 
   disconnectTimers.set(timerKey, timerId);
 }
@@ -308,6 +311,8 @@ function getPermissions(roomId, userId) {
 
 module.exports = {
   rooms: rooms,
+  RECONNECT_GRACE_MS: RECONNECT_GRACE_MS,
+  TRAINER_RECONNECT_GRACE_MS: trainer_reconnect_timeout_ms,
   getOrCreateRoom: getOrCreateRoom,
   getRoom: getRoom,
   shouldWait: shouldWait,

@@ -26,6 +26,7 @@ var userSchema = new mongoose.Schema({
   email: String,
   password: String,
   role: String,
+  batch: { type: String, default: "" },
 });
 
 var User = mongoose.model("User", userSchema);
@@ -260,7 +261,13 @@ app.use(
   "/api/notifications",
   require("./routes/notificationRoutes.cjs")(verifyToken, checkRole),
 );
-attachSocket(server);
+
+var io = attachSocket(server);
+app.set("io", io);
+app.use(
+  "/api/announcements",
+  require("./routes/announcementroutes.cjs")(verifyToken, checkRole),
+);
 
 server.listen(5000, function () {
   console.log("Server is running on port 5000");

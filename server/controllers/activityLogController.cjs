@@ -1,7 +1,5 @@
 var ActivityLog = require("../models/ActivityLog.cjs");
 /**
- * Internal helper to create a log entry.
- *
  * @param {string} sessionId
  * @param {string} eventType
  * @param {Object} actor

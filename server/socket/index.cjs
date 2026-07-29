@@ -16,9 +16,8 @@ function participantListPayload(roomId) {
   };
 }
 /**
- * Attach socket.io to an existing HTTP server.
  * @param {import("http").Server} httpServer
- * @returns {import("socket.io").Server} io
+ * @returns {import("socket.io").Server} 
  */
 function attachSocket(httpServer) {
   var { Server } = require("socket.io");
@@ -28,13 +27,11 @@ function attachSocket(httpServer) {
   });
 
   var classroom = io.of("/classroom");
+  var User = require("mongoose").model("User");
   /**
-   * Single source of truth for ending a session - used by both the manual
-   * "trainer clicked End Session" path and the automatic "trainer never
-   * reconnected in time" path, so they can never drift apart.
    * @param {string} roomId
-   * @param {string} reason - "manual" | "trainer_timeout"
-   * @param {{id:string, name:string}} actor - who/what caused the end
+   * @param {string} reason 
+   * @param {{id:string, name:string}} actor 
    */
   function endSession(roomId, reason, actor) {
     classroom.to("session:" + roomId).emit("session:ended", {
@@ -65,7 +62,7 @@ function attachSocket(httpServer) {
       });
     }
   }
-  classroom.use(function (socket, next) {
+  classroom.use(async function (socket, next) {
     var token = socket.handshake.auth && socket.handshake.auth.token;
     if (!token) {
       return next(new Error("Authentication error: token missing"));
@@ -75,6 +72,8 @@ function attachSocket(httpServer) {
       socket.data.userId = decoded.email;
       socket.data.name = decoded.firstName || "Unknown";
       socket.data.role = decoded.role || "Student";
+      var fullUser = await User.findOne({ email: decoded.email });
+      socket.data.batch = fullUser && fullUser.batch ? fullUser.batch : "";
       next();
     } catch (err) {
       console.error("[classroom] Auth error:", err.message);
@@ -88,6 +87,9 @@ function attachSocket(httpServer) {
       "(" + socket.data.role + ")",
       "socketId=" + socket.id,
     );
+    if (socket.data.batch) {
+      socket.join("batch:" + socket.data.batch);
+    }
     socket.on("room:join", async function (data, callback) {
       var roomId = data && data.roomId;
       if (!roomId) {

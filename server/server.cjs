@@ -261,7 +261,10 @@ app.use(
   "/api/notifications",
   require("./routes/notificationRoutes.cjs")(verifyToken, checkRole),
 );
-
+app.use(
+  "/api/recordings",
+  require("./routes/recordingroutes.cjs")(verifyToken, checkRole),
+);
 var io = attachSocket(server);
 app.set("io", io);
 app.use(

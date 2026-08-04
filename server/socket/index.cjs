@@ -61,6 +61,12 @@ function attachSocket(httpServer) {
         reason: reason || "manual",
       });
     }
+    var Session = require("../models/Session.cjs");
+    Session.updateOne({ roomId: roomId }, { status: "Completed" }).catch(
+      function (err) {
+        console.error("Error updating session status to Completed:", err);
+      },
+    );
   }
   classroom.use(async function (socket, next) {
     var token = socket.handshake.auth && socket.handshake.auth.token;
@@ -113,7 +119,7 @@ function attachSocket(httpServer) {
       socket.data.roomId = roomId;
       var isNew = !roomState.getRoom(roomId);
       var room = roomState.getOrCreateRoom(roomId);
-      if (isNew) {
+     if (isNew) {
         try {
           var Session = require("../models/Session.cjs");
           var sessionDoc = await Session.findOne({ roomId: roomId });
@@ -125,8 +131,24 @@ function attachSocket(httpServer) {
           console.error("Error loading session config", err);
         }
       }
-      if (roomState.shouldWait(room, socket.data.role, socket.data.userId)) {
-        console.log(
+      if (isHost(socket) && !room.liveStarted) {
+        room.liveStarted = true;
+        try {
+          var session = require("../models/Session.cjs");
+          await session.updateOne({ roomId: roomId }, { status: "Live" });
+        } catch (err) {
+          console.error("Error updating session status to Live:", err);
+        }
+        activityLogController.createLog(roomId, "session:started", {
+          id: socket.data.userId,
+          name: socket.data.name,
+        });
+        classroom.to("session:" + roomId).emit("session:started", {
+          roomId: roomId,
+          startedAt: room.startedAt,
+        });
+      }
+      if (roomState.shouldWait(room, socket.data.role, socket.data.userId)) {        console.log(
           "[classroom] participant placed in waiting room –",
           socket.data.userId,
         );
@@ -200,7 +222,7 @@ function attachSocket(httpServer) {
         callback({ ok: true, room: roomState.serializeRoom(room) });
       }
     });
-    socket.on("session:start", function (data, callback) {
+    socket.on("session:start", async function (data, callback) {
       if (!isHost(socket)) {
         if (typeof callback === "function") {
           callback({ error: "Only Trainer/Admin can start a session" });
@@ -216,6 +238,19 @@ function attachSocket(httpServer) {
       }
       var room = roomState.getOrCreateRoom(roomId);
       room.startedAt = new Date();
+      room.liveStarted = true;
+
+      try {
+        var Session = require("../models/Session.cjs");
+        await Session.updateOne({ roomId: roomId }, { status: "Live" });      } catch (err) {
+        console.error("Error updating session status to Live:", err);
+      }
+
+      activityLogController.createLog(roomId, "session:started", {
+        id: socket.data.userId,
+        name: socket.data.name,
+      });
+
       classroom.to("session:" + roomId).emit("session:started", {
         roomId: roomId,
         startedAt: room.startedAt,
@@ -224,6 +259,7 @@ function attachSocket(httpServer) {
         callback({ ok: true });
       }
     });
+    
     socket.on("session:end", function (data, callback) {
       if (!isHost(socket)) {
         if (typeof callback === "function") {

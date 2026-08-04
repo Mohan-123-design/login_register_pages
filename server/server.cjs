@@ -4,6 +4,7 @@ var mongoose = require("mongoose");
 var cors = require("cors");
 var jwt = require("jsonwebtoken");
 var attachSocket = require("./socket/index.cjs");
+var activityLogController = require("./controllers/activityLogController.cjs");
 var app = express();
 var server = http.createServer(app);
 var JWT_SECRET = "aieducation-secret-key";
@@ -20,16 +21,8 @@ db.once("open", function () {
   console.log("Connected to MongoDB database");
 });
 
-var userSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: String,
-  password: String,
-  role: String,
-  batch: { type: String, default: "" },
-});
+var User = require("./models/user.cjs");
 
-var User = mongoose.model("User", userSchema);
 app.post("/api/register", function (req, res) {
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
@@ -76,6 +69,13 @@ app.post("/api/login", function (req, res) {
           firstName: user.firstName,
         };
         var token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: "24h" });
+        activityLogController.createLog(
+          null,
+          "user:login",
+          { id: user.email, name: user.firstName + " " + user.lastName },
+          undefined,
+          { role: user.role },
+        );
         res.json({
           success: true,
           message: "Login successful",
@@ -265,13 +265,17 @@ app.use(
   "/api/recordings",
   require("./routes/recordingroutes.cjs")(verifyToken, checkRole),
 );
+
 var io = attachSocket(server);
 app.set("io", io);
 app.use(
   "/api/announcements",
   require("./routes/announcementroutes.cjs")(verifyToken, checkRole),
 );
-
+app.use(
+  "/api/admin/dashboard",
+  require("./routes/dashboardroutes.cjs")(verifyToken, checkRole),
+);
 server.listen(5000, function () {
   console.log("Server is running on port 5000");
 });

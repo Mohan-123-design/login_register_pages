@@ -1,4 +1,5 @@
 var Notification = require("../models/Notification.cjs");
+var activityLogController = require("./activityLogController.cjs");
 var mongoose = require("mongoose");
 var User = mongoose.model("User");
 async function createNotification(req, res) {
@@ -66,8 +67,16 @@ async function createNotification(req, res) {
     });
 
     var savedNotification = await newNotification.save();
-    return res.json({ success: true, notification: savedNotification });
-  } catch (error) {
+
+    activityLogController.createLog(
+      null,
+      "notification:sent",
+      { id: senderId, name: senderId },
+      recipientType === "User" ? { id: recipientId, name: recipientId } : undefined,
+      { recipientType: recipientType, batchName: batchName, priority: priority, title: title },
+    );
+
+    return res.json({ success: true, notification: savedNotification });  } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }

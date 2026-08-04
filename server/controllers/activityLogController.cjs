@@ -1,4 +1,5 @@
 var ActivityLog = require("../models/ActivityLog.cjs");
+console.log("sessionId required?", ActivityLog.schema.path("sessionId").isRequired);
 /**
  * @param {string} sessionId
  * @param {string} eventType
@@ -7,7 +8,7 @@ var ActivityLog = require("../models/ActivityLog.cjs");
  * @param {Object} [metadata]
  */
 function createLog(sessionId, eventType, actor, target, metadata) {
-  if (!sessionId || !eventType || !actor || !actor.id) {
+  if (!eventType || !actor || !actor.id) {
     console.error("[activityLog] Missing required fields for logging:", {
       sessionId,
       eventType,
@@ -17,7 +18,7 @@ function createLog(sessionId, eventType, actor, target, metadata) {
   }
 
   var logEntry = {
-    sessionId: sessionId,
+    sessionId: sessionId || null,
     eventType: eventType,
     actorId: actor.id,
     actorName: actor.name || actor.id,

@@ -45,6 +45,8 @@ function Login() {
             setTimeout(function () {
               if (data.user && data.user.role === "Student") {
                 window.location.href = "/student-dashboard";
+              } else if (data.user && data.user.role === "Admin") {
+                window.location.href = "/admin-dashboard";
               } else {
                 window.location.href = "/dashboard";
               }

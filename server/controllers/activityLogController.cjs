@@ -1,5 +1,4 @@
 var ActivityLog = require("../models/ActivityLog.cjs");
-console.log("sessionId required?", ActivityLog.schema.path("sessionId").isRequired);
 /**
  * @param {string} sessionId
  * @param {string} eventType

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
-import AdminDashboard from "./AdminDashboard";
+import AdminDashboard from "./admindashboard";
 import LiveClassroomRoom from "./live-classroom/LiveClassroomRoom";
 import TrainerDashboard from "./TrainerDashboard";
 import RecordingDashboard from "./RecordingDashboard";
@@ -13,6 +13,7 @@ import MyAttendance from "./MyAttendance";
 import AttendanceDashboard from "./AttendanceDashboard";
 import StudentDashboard from "./StudentDashboard";
 import NotificationDashboard from "./NotificationDashboard";
+import UserManagement from "./UserManagement";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/notifications" element={<NotificationDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<UserManagement />} />
       </Routes>
     </BrowserRouter>
   );

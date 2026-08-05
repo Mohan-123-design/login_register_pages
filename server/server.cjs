@@ -61,7 +61,13 @@ app.post("/api/login", function (req, res) {
         success: false,
         message: "Email id or password is incorrect",
       });
-    } else {
+    } else if (user.status === "Inactive") {
+      res.json({
+        success: false,
+        message: "Your account is inactive. Please contact the administrator.",
+      });
+    }
+     else {
       if (user.password === password) {
         var tokenPayload = {
           email: user.email,
@@ -275,6 +281,10 @@ app.use(
 app.use(
   "/api/admin/dashboard",
   require("./routes/dashboardroutes.cjs")(verifyToken, checkRole),
+);
+app.use(
+  "/api/admin/users",
+  require("./routes/usermanagementroutes.cjs")(verifyToken, checkRole),
 );
 server.listen(5000, function () {
   console.log("Server is running on port 5000");

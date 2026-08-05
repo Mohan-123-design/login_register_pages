@@ -17,7 +17,7 @@ function AdminDashboard() {
       setErrorMessage("");
       try {
         var token = localStorage.getItem("token");
-        var response = await fetch("http://localhost:5000/api/admin/dashboard", {
+        var response = await fetch("/api/admin/dashboard", {
           headers: {
             Authorization: "Bearer " + token,
           },
@@ -144,6 +144,9 @@ function AdminDashboard() {
               <button className="admin-dash-action-btn" onClick={() => goTo("/recordings")}>
                 View Recordings
               </button>
+              <button className="admin-dash-action-btn" onClick={() => goTo("/admin/users")}>
+  Manage Users
+</button>
             </div>
           </div>
           <div className="admin-dash-section">
@@ -194,7 +197,7 @@ function AdminDashboard() {
               <tbody>
                 {recentActivity.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="admin-dash-empty-row">
+                    <td colSpan="3" className="admin-dash-empty-row">
                       No recent activity yet.
                     </td>
                   </tr>

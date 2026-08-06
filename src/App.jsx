@@ -13,7 +13,9 @@ import MyAttendance from "./MyAttendance";
 import AttendanceDashboard from "./AttendanceDashboard";
 import StudentDashboard from "./StudentDashboard";
 import NotificationDashboard from "./NotificationDashboard";
-import UserManagement from "./UserManagement";
+import UserManagement from "./usermanagement";
+import CourseManagement from "./coursemanagement";
+import CourseDetails from "./coursedetails";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
         <Route path="/notifications" element={<NotificationDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UserManagement />} />
+        <Route path="/admin/courses" element={<CourseManagement />} />
+        <Route path="/admin/courses/:id" element={<CourseDetails />} />
       </Routes>
     </BrowserRouter>
   );

@@ -147,6 +147,9 @@ function AdminDashboard() {
               <button className="admin-dash-action-btn" onClick={() => goTo("/admin/users")}>
   Manage Users
 </button>
+<button className="admin-dash-action-btn" onClick={() => goTo("/admin/courses")}>
+  Manage Courses
+</button>
             </div>
           </div>
           <div className="admin-dash-section">

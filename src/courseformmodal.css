@@ -1,0 +1,127 @@
+.course-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 15, 30, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.course-modal-box {
+  background-color: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.course-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.course-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #1a1a2e;
+}
+
+.course-modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+}
+
+.course-modal-form {
+  padding: 20px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.course-modal-error {
+  background-color: #fdecea;
+  color: #c0392b;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.course-modal-row {
+  display: flex;
+  gap: 14px;
+}
+
+.course-modal-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.course-modal-field label {
+  font-size: 13px;
+  color: #555;
+  font-weight: 600;
+}
+
+.course-modal-field input,
+.course-modal-field select,
+.course-modal-field textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.course-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.course-modal-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.course-modal-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.course-modal-btn-primary:hover {
+  background-color: #2b13b0;
+}
+
+.course-modal-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.course-modal-btn-secondary {
+  background-color: #f4f5f9;
+  color: #1a1a2e;
+}
+
+@media (max-width: 480px) {
+  .course-modal-row {
+    flex-direction: column;
+  }
+}

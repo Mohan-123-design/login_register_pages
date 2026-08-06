@@ -286,6 +286,9 @@ app.use(
   "/api/admin/users",
   require("./routes/usermanagementroutes.cjs")(verifyToken, checkRole),
 );
-server.listen(5000, function () {
-  console.log("Server is running on port 5000");
+app.use(
+  "/api/admin/courses",
+  require("./routes/coursemanagementroutes.cjs")(verifyToken, checkRole),
+);
+server.listen(5000, function () {  console.log("Server is running on port 5000");
 });

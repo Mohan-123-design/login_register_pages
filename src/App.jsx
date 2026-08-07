@@ -16,6 +16,7 @@ import NotificationDashboard from "./NotificationDashboard";
 import UserManagement from "./usermanagement";
 import CourseManagement from "./coursemanagement";
 import CourseDetails from "./coursedetails";
+import BatchManagement from "./batchmanagement";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/courses" element={<CourseManagement />} />
         <Route path="/admin/courses/:id" element={<CourseDetails />} />
+        <Route path="/admin/batches" element={<BatchManagement />} />
       </Routes>
     </BrowserRouter>
   );

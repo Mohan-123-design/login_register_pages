@@ -164,7 +164,9 @@ function CourseDetails() {
               </div>
               <div>
                 <span className="course-details-meta-label">Batch</span>
-                <span className="course-details-meta-value">{course.batch || "-"}</span>
+                <span className="course-details-meta-value">{course.linkedBatchNames && course.linkedBatchNames.length > 0
+    ? course.linkedBatchNames.join(", ")
+    : "-"}</span>
               </div>
               <div>
                 <span className="course-details-meta-label">Category</span>

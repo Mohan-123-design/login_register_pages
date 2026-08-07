@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./courseformmodal.css";
 
 function CourseFormModal({ mode, course, onClose, onSaved }) {
@@ -7,7 +8,8 @@ function CourseFormModal({ mode, course, onClose, onSaved }) {
   var [code, setCode] = useState(isEdit ? course.code || "" : "");
   var [description, setDescription] = useState(isEdit ? course.description || "" : "");
   var [category, setCategory] = useState(isEdit ? course.category || "" : "");
-  var [batch, setBatch] = useState(isEdit ? course.batch || "" : "");
+  var [linkedBatches, setLinkedBatches] = useState([]);
+  var [isLoadingBatches, setIsLoadingBatches] = useState(isEdit);
   var [duration, setDuration] = useState(isEdit ? course.duration || "" : "");
   var [startDate, setStartDate] = useState(
     isEdit && course.startDate ? course.startDate.substring(0, 10) : "",
@@ -36,6 +38,25 @@ function CourseFormModal({ mode, course, onClose, onSaved }) {
       .catch(function (error) {
         console.error("Error fetching trainers:", error);
       });
+    if (isEdit) {
+      fetch("/api/admin/batches?courseId=" + course._id + "&limit=50", {
+        headers: { Authorization: "Bearer " + getToken() },
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.success) {
+            setLinkedBatches(data.batches);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error fetching linked batches:", error);
+        })
+        .finally(function () {
+          setIsLoadingBatches(false);
+        });
+    }
   }, []);
 
   async function handleSubmit(e) {
@@ -56,7 +77,6 @@ function CourseFormModal({ mode, course, onClose, onSaved }) {
         code: code.trim(),
         description: description.trim(),
         category: category.trim(),
-        batch: batch.trim(),
         duration: duration.trim(),
         startDate: startDate === "" ? null : startDate,
         trainerEmail: trainerEmail,
@@ -151,13 +171,24 @@ function CourseFormModal({ mode, course, onClose, onSaved }) {
 
           <div className="course-modal-row">
             <div className="course-modal-field">
-              <label>Batch</label>
-              <input
-                type="text"
-                value={batch}
-                onChange={(e) => setBatch(e.target.value)}
-                placeholder="e.g. B1"
-              />
+              <label>Linked Batches</label>
+              {!isEdit && (
+                <span className="course-modal-hint">
+                  Link a batch to this course after creating it, from Batch Management.
+                </span>
+              )}
+              {isEdit && isLoadingBatches && <span className="course-modal-hint">Loading...</span>}
+              {isEdit && !isLoadingBatches && linkedBatches.length === 0 && (
+                <span className="course-modal-hint">No batch linked yet.</span>
+              )}
+              {isEdit && !isLoadingBatches && linkedBatches.length > 0 && (
+                <span className="course-modal-hint">{linkedBatches.map((b) => b.name).join(", ")}</span>
+              )}
+              {isEdit && (
+                <Link to="/admin/batches" onClick={onClose} className="course-modal-hint-link">
+                  Manage in Batch Management
+                </Link>
+              )}
             </div>
             <div className="course-modal-field">
               <label>Duration</label>

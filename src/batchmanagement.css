@@ -1,0 +1,286 @@
+.batch-mgmt-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.batch-mgmt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.batch-mgmt-header h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.batch-mgmt-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.batch-mgmt-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.batch-mgmt-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.batch-mgmt-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.batch-mgmt-btn-primary:hover {
+  background-color: #2b13b0;
+}
+
+.batch-mgmt-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+
+.batch-mgmt-btn-secondary:hover {
+  background-color: #f4f5f9;
+}
+
+.batch-mgmt-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.batch-mgmt-btn-text {
+  background: none;
+  color: #3a1dde;
+  padding: 10px 4px;
+  text-decoration: underline;
+}
+
+.batch-mgmt-toast {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.batch-mgmt-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.batch-mgmt-stat-card {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.batch-mgmt-stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3a1dde;
+}
+
+.batch-mgmt-stat-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.batch-mgmt-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.batch-mgmt-search-form {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.batch-mgmt-search-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+}
+
+.batch-mgmt-select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.batch-mgmt-status {
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.batch-mgmt-loading {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.batch-mgmt-error {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
+.batch-mgmt-table-wrap {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  overflow-x: auto;
+}
+
+.batch-mgmt-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 820px;
+}
+
+.batch-mgmt-table th,
+.batch-mgmt-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.batch-mgmt-table th {
+  color: #666;
+  font-weight: 600;
+}
+
+.batch-mgmt-empty-row {
+  text-align: center;
+  color: #999;
+  padding: 24px;
+}
+
+.batch-mgmt-title-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1a1a2e;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-align: left;
+}
+
+.batch-mgmt-status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.batch-mgmt-status-active {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+}
+
+.batch-mgmt-status-archived {
+  background-color: #f1f1f4;
+  color: #666;
+}
+
+.batch-mgmt-row-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.batch-mgmt-action-link {
+  background: none;
+  border: none;
+  color: #3a1dde;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.batch-mgmt-action-danger {
+  color: #c0392b;
+}
+
+.batch-mgmt-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.batch-mgmt-page-info {
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .batch-mgmt-page {
+    padding: 16px;
+  }
+  .batch-mgmt-header {
+    flex-direction: column;
+  }
+  .batch-mgmt-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.batch-mgmt-code {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.batch-mgmt-status-upcoming {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.batch-mgmt-status-completed {
+  background-color: #fff4e0;
+  color: #b26a00;
+}

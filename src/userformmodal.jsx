@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./userformmodal.css";
 
 function UserFormModal({ mode, user, onClose, onSaved }) {
@@ -8,7 +9,7 @@ function UserFormModal({ mode, user, onClose, onSaved }) {
   var [email, setEmail] = useState(isEdit ? user.email : "");
   var [password, setPassword] = useState("");
   var [role, setRole] = useState(isEdit ? user.role : "Student");
-  var [batch, setBatch] = useState(isEdit ? user.batch || "" : "");
+  var currentBatch = isEdit ? user.batch || "" : "";
   var [errorMessage, setErrorMessage] = useState("");
   var [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,7 +39,6 @@ function UserFormModal({ mode, user, onClose, onSaved }) {
         lastName: lastName.trim(),
         email: email.trim(),
         role: role,
-        batch: batch.trim(),
       };
       if (!isEdit) {
         payload.password = password;
@@ -135,12 +135,19 @@ function UserFormModal({ mode, user, onClose, onSaved }) {
             </div>
             <div className="user-modal-field">
               <label>Batch</label>
-              <input
-                type="text"
-                value={batch}
-                onChange={(e) => setBatch(e.target.value)}
-                placeholder="e.g. B1"
-              />
+              <input type="text" value={currentBatch || "Unassigned"} disabled readOnly />
+              <span className="user-modal-hint">
+                {isEdit ? (
+                  <>
+                    Managed in{" "}
+                    <Link to="/admin/batches" onClick={onClose}>
+                      Batch Management
+                    </Link>
+                  </>
+                ) : (
+                  "Allocate this user to a batch after creating them, from Batch Management."
+                )}
+              </span>
             </div>
           </div>
 

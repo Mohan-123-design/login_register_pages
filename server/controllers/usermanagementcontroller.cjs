@@ -56,8 +56,6 @@ var userManagementController = {
       var email = req.body.email;
       var password = req.body.password;
       var role = req.body.role || "Student";
-      var batch = req.body.batch || "";
-
       if (!firstName || !lastName || !email || !password) {
         return res.status(400).json({
           success: false,
@@ -76,7 +74,7 @@ var userManagementController = {
         email: email,
         password: password,
         role: role,
-        batch: batch,
+        batch: "",
         status: "Active",
       });
       await newUser.save();
@@ -98,8 +96,6 @@ var userManagementController = {
       if (req.body.lastName !== undefined) updates.lastName = req.body.lastName;
       if (req.body.email !== undefined) updates.email = req.body.email;
       if (req.body.role !== undefined) updates.role = req.body.role;
-      if (req.body.batch !== undefined) updates.batch = req.body.batch;
-
       if (updates.email) {
         var duplicate = await User.findOne({ email: updates.email, _id: { $ne: req.params.id } });
         if (duplicate) {

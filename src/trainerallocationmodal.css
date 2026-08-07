@@ -1,4 +1,4 @@
-.course-modal-overlay {
+.trainer-alloc-overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(15, 15, 30, 0.5);
@@ -9,7 +9,7 @@
   padding: 16px;
 }
 
-.course-modal-box {
+.trainer-alloc-box {
   background-color: #fff;
   border-radius: 16px;
   width: 100%;
@@ -19,7 +19,7 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.course-modal-header {
+.trainer-alloc-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,13 +27,13 @@
   border-bottom: 1px solid #eee;
 }
 
-.course-modal-header h2 {
+.trainer-alloc-header h2 {
   margin: 0;
   font-size: 18px;
   color: #1a1a2e;
 }
 
-.course-modal-close {
+.trainer-alloc-close {
   background: none;
   border: none;
   font-size: 22px;
@@ -42,14 +42,21 @@
   color: #666;
 }
 
-.course-modal-form {
+.trainer-alloc-body {
   padding: 20px 24px 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.course-modal-error {
+.trainer-alloc-status {
+  padding: 14px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+
+.trainer-alloc-error {
   background-color: #fdecea;
   color: #c0392b;
   padding: 10px 14px;
@@ -57,27 +64,27 @@
   font-size: 13px;
 }
 
-.course-modal-row {
+.trainer-alloc-row {
   display: flex;
   gap: 14px;
 }
 
-.course-modal-field {
+.trainer-alloc-field {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.course-modal-field label {
+.trainer-alloc-field label {
   font-size: 13px;
   color: #555;
   font-weight: 600;
 }
 
-.course-modal-field input,
-.course-modal-field select,
-.course-modal-field textarea {
+.trainer-alloc-field input,
+.trainer-alloc-field select,
+.trainer-alloc-field textarea {
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid #d7dbe6;
@@ -85,27 +92,15 @@
   font-family: inherit;
   resize: vertical;
 }
-.course-modal-hint {
-  font-size: 13px;
-  color: #666;
-  padding: 10px 12px;
-  background-color: #f4f5f9;
-  border-radius: 8px;
-}
 
-.course-modal-hint-link {
-  font-size: 12px;
-  color: #3a1dde;
-  text-decoration: underline;
-}
-.course-modal-actions {
+.trainer-alloc-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 8px;
 }
 
-.course-modal-btn {
+.trainer-alloc-btn {
   border: none;
   border-radius: 10px;
   padding: 10px 18px;
@@ -113,27 +108,27 @@
   cursor: pointer;
 }
 
-.course-modal-btn-primary {
+.trainer-alloc-btn-primary {
   background-color: #3a1dde;
   color: #fff;
 }
 
-.course-modal-btn-primary:hover {
+.trainer-alloc-btn-primary:hover {
   background-color: #2b13b0;
 }
 
-.course-modal-btn-primary:disabled {
+.trainer-alloc-btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.course-modal-btn-secondary {
+.trainer-alloc-btn-secondary {
   background-color: #f4f5f9;
   color: #1a1a2e;
 }
 
 @media (max-width: 480px) {
-  .course-modal-row {
+  .trainer-alloc-row {
     flex-direction: column;
   }
 }

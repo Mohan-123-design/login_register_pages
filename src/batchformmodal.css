@@ -1,4 +1,4 @@
-.course-modal-overlay {
+.batch-modal-overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(15, 15, 30, 0.5);
@@ -9,7 +9,7 @@
   padding: 16px;
 }
 
-.course-modal-box {
+.batch-modal-box {
   background-color: #fff;
   border-radius: 16px;
   width: 100%;
@@ -19,7 +19,7 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.course-modal-header {
+.batch-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,13 +27,13 @@
   border-bottom: 1px solid #eee;
 }
 
-.course-modal-header h2 {
+.batch-modal-header h2 {
   margin: 0;
   font-size: 18px;
   color: #1a1a2e;
 }
 
-.course-modal-close {
+.batch-modal-close {
   background: none;
   border: none;
   font-size: 22px;
@@ -42,14 +42,14 @@
   color: #666;
 }
 
-.course-modal-form {
+.batch-modal-form {
   padding: 20px 24px 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.course-modal-error {
+.batch-modal-error {
   background-color: #fdecea;
   color: #c0392b;
   padding: 10px 14px;
@@ -57,27 +57,27 @@
   font-size: 13px;
 }
 
-.course-modal-row {
+.batch-modal-row {
   display: flex;
   gap: 14px;
 }
 
-.course-modal-field {
+.batch-modal-field {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.course-modal-field label {
+.batch-modal-field label {
   font-size: 13px;
   color: #555;
   font-weight: 600;
 }
 
-.course-modal-field input,
-.course-modal-field select,
-.course-modal-field textarea {
+.batch-modal-field input,
+.batch-modal-field select,
+.batch-modal-field textarea {
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid #d7dbe6;
@@ -85,27 +85,15 @@
   font-family: inherit;
   resize: vertical;
 }
-.course-modal-hint {
-  font-size: 13px;
-  color: #666;
-  padding: 10px 12px;
-  background-color: #f4f5f9;
-  border-radius: 8px;
-}
 
-.course-modal-hint-link {
-  font-size: 12px;
-  color: #3a1dde;
-  text-decoration: underline;
-}
-.course-modal-actions {
+.batch-modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 8px;
 }
 
-.course-modal-btn {
+.batch-modal-btn {
   border: none;
   border-radius: 10px;
   padding: 10px 18px;
@@ -113,27 +101,27 @@
   cursor: pointer;
 }
 
-.course-modal-btn-primary {
+.batch-modal-btn-primary {
   background-color: #3a1dde;
   color: #fff;
 }
 
-.course-modal-btn-primary:hover {
+.batch-modal-btn-primary:hover {
   background-color: #2b13b0;
 }
 
-.course-modal-btn-primary:disabled {
+.batch-modal-btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.course-modal-btn-secondary {
+.batch-modal-btn-secondary {
   background-color: #f4f5f9;
   color: #1a1a2e;
 }
 
 @media (max-width: 480px) {
-  .course-modal-row {
+  .batch-modal-row {
     flex-direction: column;
   }
 }

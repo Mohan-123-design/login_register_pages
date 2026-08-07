@@ -351,8 +351,11 @@ function CourseManagement() {
                       </td>
                       <td>{course.code || "-"}</td>
                       <td>{course.trainerName || "Unassigned"}</td>
-                      <td>{course.batch || "-"}</td>
-                      <td>{course.duration || "-"}</td>
+<td>
+  {course.linkedBatchNames && course.linkedBatchNames.length > 0
+    ? course.linkedBatchNames.join(", ")
+    : "-"}
+</td>                      <td>{course.duration || "-"}</td>
                       <td>{formatDate(course.createdAt)}</td>
                       <td>
                         <span

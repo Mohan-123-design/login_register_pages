@@ -82,7 +82,20 @@
   border: 1px solid #d7dbe6;
   font-size: 14px;
 }
+.user-modal-field input:disabled {
+  background-color: #f4f5f9;
+  color: #666;
+  cursor: not-allowed;
+}
 
+.user-modal-hint {
+  font-size: 12px;
+  color: #888;
+}
+
+.user-modal-hint a {
+  color: #3a1dde;
+}
 .user-modal-actions {
   display: flex;
   justify-content: flex-end;

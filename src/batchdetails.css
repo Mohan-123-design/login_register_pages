@@ -1,0 +1,247 @@
+.batch-details-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.batch-details-header {
+  margin-bottom: 20px;
+}
+
+.batch-details-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.batch-details-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.batch-details-btn-primary:hover {
+  background-color: #2b13b0;
+}
+
+.batch-details-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+
+.batch-details-btn-secondary:hover {
+  background-color: #f4f5f9;
+}
+
+.batch-details-toast {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.batch-details-status {
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.batch-details-loading {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.batch-details-error {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
+.batch-details-card {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.batch-details-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.batch-details-title-row h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.batch-details-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.batch-details-status-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.batch-details-status-active {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+}
+
+.batch-details-status-archived {
+  background-color: #f1f1f4;
+  color: #666;
+}
+
+.batch-details-description {
+  color: #444;
+  margin: 16px 0;
+  line-height: 1.5;
+}
+
+.batch-details-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.batch-details-meta-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.batch-details-meta-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.batch-details-meta-value {
+  font-size: 15px;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.batch-details-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.batch-details-card h2 {
+  margin: 0 0 16px 0;
+  color: #1a1a2e;
+  font-size: 17px;
+}
+
+.batch-details-empty {
+  color: #999;
+}
+
+.batch-details-table-wrap {
+  overflow-x: auto;
+}
+
+.batch-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+}
+
+.batch-details-table th,
+.batch-details-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.batch-details-table th {
+  color: #666;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .batch-details-page {
+    padding: 16px;
+  }
+}
+
+
+.batch-details-status-upcoming {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.batch-details-status-completed {
+  background-color: #fff4e0;
+  color: #b26a00;
+}
+
+.batch-details-status-select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.batch-details-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.batch-details-analytics-card {
+  background-color: #f8f9fc;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.batch-details-analytics-number {
+  font-size: 22px;
+  font-weight: 700;
+  color: #3a1dde;
+}
+
+.batch-details-analytics-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.batch-details-action-link {
+  background: none;
+  border: none;
+  color: #3a1dde;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.batch-details-action-danger {
+  color: #c0392b;
+}

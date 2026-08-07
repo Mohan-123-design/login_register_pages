@@ -290,5 +290,9 @@ app.use(
   "/api/admin/courses",
   require("./routes/coursemanagementroutes.cjs")(verifyToken, checkRole),
 );
+app.use(
+  "/api/admin/batches",
+  require("./routes/batchroutes.cjs")(verifyToken, checkRole),
+);
 server.listen(5000, function () {  console.log("Server is running on port 5000");
 });

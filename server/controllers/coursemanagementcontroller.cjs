@@ -1,5 +1,6 @@
 var Course = require("../models/course.cjs");
 var User = require("../models/user.cjs");
+var Batch = require("../models/batch.cjs");
 var courseManagementController = {
   getAllCourses: async function (req, res) {
     try {
@@ -18,16 +19,32 @@ var courseManagementController = {
       if (batch !== "") query.batch = batch;
       if (trainerEmail !== "") query.trainerEmail = trainerEmail;
 
-      var totalCourses = await Course.countDocuments(query);
+var totalCourses = await Course.countDocuments(query);
       var courses = await Course.find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
 
+      // Batch.courseId is now the real link (Course.batch is intentionally
+      // always "" - see createCourse/updateCourse). Look up linked batch
+      // names per course so the list view can display them.
+      var courseIds = courses.map(function (c) { return c._id; });
+      var linkedBatches = await Batch.find({ courseId: { $in: courseIds } }).select("name courseId");
+      var batchNameMap = {};
+      linkedBatches.forEach(function (b) {
+        var key = b.courseId.toString();
+        if (!batchNameMap[key]) batchNameMap[key] = [];
+        batchNameMap[key].push(b.name);
+      });
+      var coursesWithBatches = courses.map(function (c) {
+        var obj = c.toObject();
+        obj.linkedBatchNames = batchNameMap[c._id.toString()] || [];
+        return obj;
+      });
+
       return res.status(200).json({
         success: true,
-        courses: courses,
-        total: totalCourses,
+        courses: coursesWithBatches,        total: totalCourses,
         page: page,
         totalPages: Math.ceil(totalCourses / limit) || 1,
       });
@@ -102,19 +119,45 @@ var courseManagementController = {
       if (!course) {
         return res.status(404).json({ success: false, message: "Course not found" });
       }
+      var enrolledMap = {};
 
-      var enrolledStudents = [];
       if (course.batch) {
-        enrolledStudents = await User.find({
+        var legacyStudents = await User.find({
           batch: course.batch,
           role: { $in: ["Student", "Employee"] },
         }).select("firstName lastName email batch status");
+        for (var i = 0; i < legacyStudents.length; i++) {
+          enrolledMap[legacyStudents[i].email] = legacyStudents[i];
+        }
       }
+
+      var linkedBatches = await Batch.find({ courseId: course._id }).select("students");
+      var linkedEmails = [];
+      for (var j = 0; j < linkedBatches.length; j++) {
+        for (var k = 0; k < linkedBatches[j].students.length; k++) {
+          linkedEmails.push(linkedBatches[j].students[k].studentEmail);
+        }
+      }
+      if (linkedEmails.length > 0) {
+        var batchLinkedStudents = await User.find({ email: { $in: linkedEmails } }).select(
+          "firstName lastName email batch status",
+        );
+        for (var m = 0; m < batchLinkedStudents.length; m++) {
+          enrolledMap[batchLinkedStudents[m].email] = batchLinkedStudents[m];
+        }
+      }
+
+var enrolledStudents = Object.keys(enrolledMap).map(function (email) {
+        return enrolledMap[email];
+      });
+
+      var linkedBatchDocs = await Batch.find({ courseId: course._id }).select("name");
+      var courseObj = course.toObject();
+      courseObj.linkedBatchNames = linkedBatchDocs.map(function (b) { return b.name; });
 
       return res.status(200).json({
         success: true,
-        course: course,
-        enrolledStudents: enrolledStudents,
+        course: courseObj,        enrolledStudents: enrolledStudents,
         enrolledCount: enrolledStudents.length,
       });
     } catch (error) {
@@ -147,7 +190,7 @@ var courseManagementController = {
         category: req.body.category || "",
         trainerEmail: trainerEmail,
         trainerName: trainerName,
-        batch: req.body.batch || "",
+        batch: "",
         duration: req.body.duration || "",
         startDate: req.body.startDate || null,
         status: "Active",
@@ -173,7 +216,6 @@ var courseManagementController = {
       if (req.body.code !== undefined) updates.code = req.body.code;
       if (req.body.description !== undefined) updates.description = req.body.description;
       if (req.body.category !== undefined) updates.category = req.body.category;
-      if (req.body.batch !== undefined) updates.batch = req.body.batch;
       if (req.body.duration !== undefined) updates.duration = req.body.duration;
       if (req.body.startDate !== undefined) updates.startDate = req.body.startDate;
       if (req.body.trainerEmail !== undefined) {

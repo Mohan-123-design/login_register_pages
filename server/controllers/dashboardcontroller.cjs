@@ -2,6 +2,7 @@ var User = require("../models/user.cjs")
 var Session = require("../models/Session.cjs");
 var ActivityLog = require("../models/ActivityLog.cjs");
 var Course = require("../models/course.cjs");
+var Batch = require("../models/batch.cjs");
 var Exam = require("../models/exam.cjs");
 var Certificate = require("../models/certificate.cjs");
 var Assignment = require("../models/assignment.cjs");
@@ -14,11 +15,6 @@ var dashboardController = {
           $facet: {
             roleCounts: [
               { $group: { _id: "$role", count: { $sum: 1 } } },
-            ],
-            batchCounts: [
-              { $match: { batch: { $ne: "" } } },
-              { $group: { _id: "$batch" } },
-              { $count: "totalBatches" },
             ],
             recentRegistrations: [
               { $sort: { createdAt: -1 } },
@@ -49,11 +45,7 @@ var dashboardController = {
           totalTrainers += group.count;
         }
       }
-      var totalBatches =
-        facetResult.batchCounts.length > 0
-          ? facetResult.batchCounts[0].totalBatches
-          : 0;
-
+      var totalBatches = await Batch.countDocuments({});
       var sessionAggregation = await Session.aggregate([
         { $group: { _id: "$status", count: { $sum: 1 } } },
       ]);

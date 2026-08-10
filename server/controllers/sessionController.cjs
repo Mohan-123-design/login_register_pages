@@ -5,6 +5,7 @@ var sessionController = {
       var {
         roomId,
         name,
+        batch,
         trainer,
         date,
         time,
@@ -32,6 +33,7 @@ var sessionController = {
       var newSession = new Session({
         roomId,
         name,
+        batch: batch || name,
         trainer,
         date,
         time,
@@ -63,6 +65,54 @@ var sessionController = {
     }
   },
 
+    updateSession: async function (req, res) {
+    try {
+      var { roomId } = req.params;
+      if (!roomId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Missing roomId" });
+      }
+
+      var allowedFields = [
+        "name",
+        "batch",
+        "trainer",
+        "date",
+        "time",
+        "duration",
+        "description",
+        "status",
+      ];
+      var updates = {};
+      for (var i = 0; i < allowedFields.length; i++) {
+        var field = allowedFields[i];
+        if (req.body[field] !== undefined) {
+          updates[field] = req.body[field];
+        }
+      }
+
+      var updatedSession = await Session.findOneAndUpdate(
+        { roomId: roomId },
+        updates,
+        { new: true },
+      );
+
+      if (!updatedSession) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Session not found." });
+      }
+
+      return res.status(200).json({ success: true, session: updatedSession });
+    } catch (error) {
+      console.error("Error updating session:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  },
+  
   deleteSession: async function (req, res) {
     try {
       var { roomId } = req.params;

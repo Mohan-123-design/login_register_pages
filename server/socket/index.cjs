@@ -1204,7 +1204,10 @@ function attachSocket(httpServer) {
       }
     });
   });
-
+  io.forceEndClassroomSession = endSession;
+  io.getClassroomNamespace = function () {
+    return classroom;
+  };
   return io;
 }
 

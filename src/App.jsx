@@ -17,6 +17,8 @@ import UserManagement from "./usermanagement";
 import CourseManagement from "./coursemanagement";
 import CourseDetails from "./coursedetails";
 import BatchManagement from "./batchmanagement";
+import AdminLiveSessionMonitor from "./adminlivesessionmonitor";
+
 
 function App() {
   return (
@@ -40,6 +42,7 @@ function App() {
         <Route path="/admin/courses" element={<CourseManagement />} />
         <Route path="/admin/courses/:id" element={<CourseDetails />} />
         <Route path="/admin/batches" element={<BatchManagement />} />
+        <Route path="/admin/live-sessions" element={<AdminLiveSessionMonitor />} />
       </Routes>
     </BrowserRouter>
   );

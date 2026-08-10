@@ -10,10 +10,13 @@ function AdminDashboard() {
   var [recentActivity, setRecentActivity] = useState([]);
   var [isLoading, setIsLoading] = useState(true);
   var [errorMessage, setErrorMessage] = useState("");
+useEffect(() => {
+    var isFirstLoad = true;
 
-  useEffect(() => {
     async function fetchDashboard() {
-      setIsLoading(true);
+      if (isFirstLoad) {
+        setIsLoading(true);
+      }
       setErrorMessage("");
       try {
         var token = localStorage.getItem("token");
@@ -39,6 +42,7 @@ function AdminDashboard() {
         setErrorMessage("Server or network error. Is the backend running?");
       } finally {
         setIsLoading(false);
+        isFirstLoad = false;
       }
     }
    fetchDashboard();
@@ -152,6 +156,9 @@ function AdminDashboard() {
 </button>
 <button className="admin-dash-action-btn" onClick={() => goTo("/admin/batches")}>
   Manage Batches
+</button>
+<button className="admin-dash-action-btn" onClick={() => goTo("/admin/live-sessions")}>
+  Live Session Monitoring
 </button>
             </div>
           </div>

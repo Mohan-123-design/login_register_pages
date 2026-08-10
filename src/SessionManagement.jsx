@@ -5,14 +5,13 @@ function SessionManagement() {
   var [sessions, setSessions] = useState([]);
   async function fetchSessions() {
     try {
-      var token = localStorage.getItem("token");
-      var response = await fetch("http://localhost:5000/api/sessions", {
+var token = localStorage.getItem("token");
+      var response = await fetch("/api/sessions", {
         headers: { Authorization: "Bearer " + token },
       });
       var data = await response.json();
       if (data.success) {
-        setSessions(data.sessions);
-      }
+        setSessions(data.sessions);      }
     } catch (error) {
       console.error("Error fetching sessions:", error);
     }
@@ -77,35 +76,13 @@ function SessionManagement() {
     setShowForm(false);
   }
 
-  async function saveSession(e) {
+async function saveSession(e) {
     e.preventDefault();
+    var token = localStorage.getItem("token");
     if (editMode === true) {
-      var updatedSessions = [];
-      for (var i = 0; i < sessions.length; i++) {
-        var idToCheck = sessions[i].id || sessions[i].roomId;
-        if (idToCheck === currentId) {
-          var updatedSession = {
-            roomId: currentId,
-            name: formName,
-            trainer: formTrainer,
-            date: formDate,
-            time: formTime,
-            duration: formDuration,
-            description: formDescription,
-            status: formStatus,
-          };
-          updatedSessions.push(updatedSession);
-        } else {
-          updatedSessions.push(sessions[i]);
-        }
-      }
-      setSessions(updatedSessions);
-      closeForm();
-    } else {
-      var newId = "S" + Math.floor(Math.random() * 10000);
-      var newSession = {
-        roomId: newId,
+      var updatedFields = {
         name: formName,
+        batch: formName,
         trainer: formTrainer,
         date: formDate,
         time: formTime,
@@ -115,8 +92,50 @@ function SessionManagement() {
       };
 
       try {
-        var token = localStorage.getItem("token");
-        var response = await fetch("http://localhost:5000/api/sessions", {
+        var updateresponse = await fetch("/api/sessions/" + currentId, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify(updatedFields),
+        });
+        var updatedata = await updateresponse.json();
+        if (updatedata.success) {
+          var updatedSessions = [];
+          for (var i = 0; i < sessions.length; i++) {
+            var idToCheck = sessions[i].id || sessions[i].roomId;
+            if (idToCheck === currentId) {
+              updatedSessions.push(updatedata.session);
+            } else {
+              updatedSessions.push(sessions[i]);
+            }
+          }
+          setSessions(updatedSessions);
+          closeForm();
+        } else {
+          alert(updatedata.message || "Failed to update session");
+        }
+      } catch (error) {
+        console.error("Error updating session:", error);
+        alert("Failed to update session. Please try again.");
+      }
+    } else {
+      var newId = "S" + Math.floor(Math.random() * 10000);
+      var newSession = {
+        roomId: newId,
+        name: formName,
+        batch: formName,
+        trainer: formTrainer,
+        date: formDate,
+        time: formTime,
+        duration: formDuration,
+        description: formDescription,
+        status: formStatus,
+      };
+
+      try {
+        var createresponse = await fetch("/api/sessions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -124,12 +143,12 @@ function SessionManagement() {
           },
           body: JSON.stringify(newSession),
         });
-        var data = await response.json();
-        if (data.success) {
-          setSessions([...sessions, data.session]);
+        var createdata = await createresponse.json();
+        if (createdata.success) {
+          setSessions([...sessions, createdata.session]);
           closeForm();
         } else {
-          alert(data.message || "Failed to create session");
+          alert(createdata.message || "Failed to create session");
         }
       } catch (error) {
         console.error("Error creating session:", error);
@@ -145,7 +164,7 @@ function SessionManagement() {
     if (confirmDelete === true) {
       try {
         var token = localStorage.getItem("token");
-        var response = await fetch("http://localhost:5000/api/sessions/" + id, {
+        var response = await fetch("/api/sessions/" + id, {
           method: "DELETE",
           headers: {
             Authorization: "Bearer " + token,

@@ -294,5 +294,9 @@ app.use(
   "/api/admin/batches",
   require("./routes/batchroutes.cjs")(verifyToken, checkRole),
 );
+app.use(
+  "/api/admin/live-sessions",
+  require("./routes/livesessionroutes.cjs")(verifyToken, checkRole),
+);
 server.listen(5000, function () {  console.log("Server is running on port 5000");
 });

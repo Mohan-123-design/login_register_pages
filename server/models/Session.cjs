@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var sessionSchema = new mongoose.Schema({
   roomId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
+  batch: { type: String, default: "" },
   trainer: { type: String, required: true },
   date: { type: String, required: true },
   time: { type: String, required: true },

@@ -16,7 +16,12 @@ module.exports = function (verifyToken, checkRole) {
     checkRole(["Trainer", "Admin"]),
     sessionController.getSessions
   );
-
+  router.put(
+    "/:roomId",
+    verifyToken,
+    checkRole(["Trainer", "Admin"]),
+    sessionController.updateSession
+  );
   router.delete(
     "/:roomId",
     verifyToken,

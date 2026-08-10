@@ -42,11 +42,16 @@ function CreateSessionModal(props) {
       return;
     }
 
-    var newRoomId = makeRoomId(selectedBatch);
+var newRoomId = makeRoomId(selectedBatch);
+    var loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    var trainerName =
+      ((loggedInUser.firstName || "") + " " + (loggedInUser.lastName || "")).trim() ||
+      "Trainer";
     var newSession = {
       roomId: newRoomId,
       name: selectedBatch,
-      trainer: JSON.parse(localStorage.getItem("loggedInUser")).name || "Trainer",
+      batch: selectedBatch,
+      trainer: trainerName,
       date: selectedDate,
       time: selectedTime,
       isNotified: false
@@ -54,8 +59,7 @@ function CreateSessionModal(props) {
 
     try {
       var token = localStorage.getItem("token");
-      var response = await fetch("http://localhost:5000/api/sessions", {
-        method: "POST",
+      var response = await fetch("/api/sessions", {        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

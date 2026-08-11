@@ -316,6 +316,16 @@ function TrainerDashboard() {
             <div className="nav-hub-label">Attendance Dashboard</div>
             <div className="nav-hub-desc">View attendance stats & reports</div>
           </div>
+          <div
+  className="nav-hub-card nav-hub-sessions"
+  onClick={function () {
+    navigate("/admin/exams");
+  }}
+>
+  <div className="nav-hub-icon">📝</div>
+  <div className="nav-hub-label">Exam Management</div>
+  <div className="nav-hub-desc">Create, publish & grade exams</div>
+</div>
         </div>
         <h2 className="section-heading">Upcoming Sessions</h2>
         {sessionsList.length === 0 ? (

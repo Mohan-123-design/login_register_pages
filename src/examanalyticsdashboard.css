@@ -1,0 +1,182 @@
+.exam-analytics-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.exam-analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.exam-analytics-header h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.exam-analytics-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.exam-analytics-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.exam-analytics-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+
+.exam-analytics-btn:hover {
+  background-color: #f4f5f9;
+}
+
+.exam-analytics-status-msg {
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.exam-analytics-loading {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.exam-analytics-error {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
+.exam-analytics-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.exam-analytics-stat-card {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  text-align: center;
+}
+
+.exam-analytics-stat-number {
+  font-size: 26px;
+  font-weight: 700;
+  color: #3a1dde;
+}
+
+.exam-analytics-stat-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 4px;
+}
+
+.exam-analytics-charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.exam-analytics-chart-card {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.exam-analytics-chart-card h3 {
+  align-self: flex-start;
+  margin: 0 0 12px 0;
+  color: #1a1a2e;
+}
+
+.exam-analytics-donut {
+  width: 180px;
+  height: 180px;
+}
+
+.exam-analytics-donut-number {
+  font-size: 22px;
+  font-weight: 700;
+  fill: #1a1a2e;
+}
+
+.exam-analytics-donut-label {
+  font-size: 11px;
+  fill: #888;
+  text-transform: uppercase;
+}
+
+.exam-analytics-bar-chart {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
+
+.exam-analytics-bar-value {
+  font-size: 12px;
+  fill: #1a1a2e;
+  font-weight: 600;
+}
+
+.exam-analytics-bar-label {
+  font-size: 11px;
+  fill: #666;
+}
+
+.exam-analytics-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #444;
+  flex-wrap: wrap;
+}
+
+.exam-analytics-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.exam-analytics-dot-pass {
+  background-color: #1e7e42;
+}
+
+.exam-analytics-dot-fail {
+  background-color: #c0392b;
+}
+
+@media (max-width: 600px) {
+  .exam-analytics-page {
+    padding: 16px;
+  }
+  .exam-analytics-header {
+    flex-direction: column;
+  }
+}

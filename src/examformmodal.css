@@ -1,0 +1,211 @@
+.exam-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(20, 20, 35, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.exam-modal-box {
+  background-color: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 720px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.exam-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 1;
+}
+
+.exam-modal-header h2 {
+  margin: 0;
+  color: #1a1a2e;
+}
+
+.exam-modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+}
+
+.exam-modal-form {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.exam-modal-error {
+  background-color: #fdecea;
+  color: #c0392b;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.exam-modal-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.exam-modal-field {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exam-modal-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+.exam-modal-field input,
+.exam-modal-field select,
+.exam-modal-field textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.exam-modal-marks-field {
+  max-width: 200px;
+}
+
+.exam-modal-questions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.exam-modal-questions-header h3 {
+  margin: 0;
+  color: #1a1a2e;
+}
+
+.exam-modal-hint {
+  font-size: 13px;
+  color: #888;
+}
+
+.exam-modal-question-card {
+  background-color: #f7f8fb;
+  border: 1px solid #e5e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exam-modal-question-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.exam-modal-remove-question {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.exam-modal-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.exam-modal-option-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exam-modal-option-row input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 13px;
+}
+
+.exam-modal-add-question {
+  align-self: flex-start;
+  background-color: #eef1ff;
+  color: #3a1dde;
+  border: 1px dashed #b8c0f0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.exam-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.exam-modal-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.exam-modal-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.exam-modal-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.exam-modal-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+
+@media (max-width: 600px) {
+  .exam-modal-options-grid {
+    grid-template-columns: 1fr;
+  }
+}

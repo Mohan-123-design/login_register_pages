@@ -1,0 +1,243 @@
+.exam-mgmt-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.exam-mgmt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.exam-mgmt-header h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.exam-mgmt-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.exam-mgmt-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.exam-mgmt-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.exam-mgmt-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.exam-mgmt-btn-primary:hover {
+  background-color: #2b13b0;
+}
+
+.exam-mgmt-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+
+.exam-mgmt-btn-secondary:hover {
+  background-color: #f4f5f9;
+}
+
+.exam-mgmt-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.exam-mgmt-btn-text {
+  background: none;
+  color: #3a1dde;
+  padding: 10px 4px;
+  text-decoration: underline;
+}
+
+.exam-mgmt-toast {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.exam-mgmt-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.exam-mgmt-search-form {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.exam-mgmt-search-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+}
+
+.exam-mgmt-select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.exam-mgmt-status-msg {
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.exam-mgmt-loading {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.exam-mgmt-error {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
+.exam-mgmt-table-wrap {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  overflow-x: auto;
+}
+
+.exam-mgmt-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 820px;
+}
+
+.exam-mgmt-table th,
+.exam-mgmt-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.exam-mgmt-table th {
+  color: #666;
+  font-weight: 600;
+}
+
+.exam-mgmt-empty-row {
+  text-align: center;
+  color: #999;
+  padding: 24px;
+}
+
+.exam-mgmt-status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.exam-mgmt-status-draft {
+  background-color: #f1f1f4;
+  color: #666;
+}
+
+.exam-mgmt-status-published {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.exam-mgmt-status-ongoing {
+  background-color: #fff4e0;
+  color: #b7791f;
+}
+
+.exam-mgmt-status-completed {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+}
+
+.exam-mgmt-status-unpublished {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
+.exam-mgmt-row-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.exam-mgmt-action-link {
+  background: none;
+  border: none;
+  color: #3a1dde;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.exam-mgmt-action-danger {
+  color: #c0392b;
+}
+
+.exam-mgmt-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.exam-mgmt-page-info {
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .exam-mgmt-page {
+    padding: 16px;
+  }
+  .exam-mgmt-header {
+    flex-direction: column;
+  }
+  .exam-mgmt-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

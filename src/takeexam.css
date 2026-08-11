@@ -1,0 +1,225 @@
+.take-exam-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.take-exam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.take-exam-header h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.take-exam-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.take-exam-timer {
+  background-color: #fff;
+  border: 1px solid #d7dbe6;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+  font-size: 15px;
+}
+
+.take-exam-timer-warn {
+  background-color: #fdecea;
+  color: #c0392b;
+  border-color: #f3c4bd;
+}
+
+.take-exam-instructions {
+  background-color: #fff4e0;
+  color: #7a5a13;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.take-exam-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.take-exam-question-card {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.take-exam-question-text {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.take-exam-question-marks {
+  font-weight: 400;
+  color: #888;
+  font-size: 12px;
+}
+
+.take-exam-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.take-exam-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e4e7ef;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.take-exam-option:hover {
+  background-color: #f7f8fc;
+}
+
+.take-exam-footer {
+  position: sticky;
+  bottom: 16px;
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 14px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.take-exam-progress {
+  color: #666;
+  font-size: 13px;
+}
+
+.take-exam-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.take-exam-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.take-exam-btn-primary:hover {
+  background-color: #2b13b0;
+}
+
+.take-exam-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.take-exam-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+  margin-top: 12px;
+}
+
+.take-exam-status-msg {
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.take-exam-loading {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.take-exam-error {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
+.take-exam-info {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+}
+
+.take-exam-result-card {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 480px;
+  margin: 40px auto;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.take-exam-result-sub {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.take-exam-result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.take-exam-result-grid div {
+  background-color: #f7f8fc;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.take-exam-result-grid span {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.take-exam-result-grid strong {
+  font-size: 18px;
+  color: #1a1a2e;
+}
+
+.take-exam-pass {
+  color: #1e7e42 !important;
+}
+
+.take-exam-fail {
+  color: #c0392b !important;
+}
+
+@media (max-width: 600px) {
+  .take-exam-page {
+    padding: 16px;
+  }
+  .take-exam-header {
+    flex-direction: column;
+  }
+}

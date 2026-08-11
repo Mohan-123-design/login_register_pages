@@ -18,7 +18,11 @@ import CourseManagement from "./coursemanagement";
 import CourseDetails from "./coursedetails";
 import BatchManagement from "./batchmanagement";
 import AdminLiveSessionMonitor from "./adminlivesessionmonitor";
-
+import ExamManagement from "./exammanagement";
+import ExamResultSummary from "./examresultsummary";
+import ExamAnalyticsDashboard from "./examanalyticsdashboard";
+import StudentExams from "./studentexams";
+import TakeExam from "./takeexam";
 
 function App() {
   return (
@@ -43,6 +47,11 @@ function App() {
         <Route path="/admin/courses/:id" element={<CourseDetails />} />
         <Route path="/admin/batches" element={<BatchManagement />} />
         <Route path="/admin/live-sessions" element={<AdminLiveSessionMonitor />} />
+        <Route path="/admin/exams" element={<ExamManagement />} />
+<Route path="/exams/:id/results" element={<ExamResultSummary />} />
+<Route path="/exams/:id/analytics" element={<ExamAnalyticsDashboard />} />
+<Route path="/my-exams" element={<StudentExams />} />
+<Route path="/exams/:id/take" element={<TakeExam />} />
       </Routes>
     </BrowserRouter>
   );

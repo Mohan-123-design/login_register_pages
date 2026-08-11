@@ -160,6 +160,9 @@ useEffect(() => {
 <button className="admin-dash-action-btn" onClick={() => goTo("/admin/live-sessions")}>
   Live Session Monitoring
 </button>
+<button className="admin-dash-action-btn" onClick={() => goTo("/admin/exams")}>
+  Manage Exams
+</button>
             </div>
           </div>
           <div className="admin-dash-section">

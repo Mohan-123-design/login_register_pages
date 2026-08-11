@@ -1,0 +1,150 @@
+.student-exam-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.student-exam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.student-exam-header h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.student-exam-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.student-exam-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+
+.student-exam-status-msg {
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.student-exam-loading {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.student-exam-error {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
+.student-exam-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.student-exam-empty {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  color: #999;
+}
+
+.student-exam-card {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.student-exam-card-main h3 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.student-exam-meta {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.student-exam-card-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-exam-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #f1f1f4;
+  color: #666;
+}
+
+.student-exam-status-published {
+  background-color: #e8f0fe;
+  color: #2166c4;
+}
+
+.student-exam-status-ongoing {
+  background-color: #fff4e0;
+  color: #b7791f;
+}
+
+.student-exam-status-completed {
+  background-color: #e6f6ec;
+  color: #1e7e42;
+}
+
+.student-exam-attempt-status {
+  font-size: 12px;
+  color: #888;
+}
+
+@media (max-width: 600px) {
+  .student-exam-page {
+    padding: 16px;
+  }
+  .student-exam-header {
+    flex-direction: column;
+  }
+}
+.student-exam-card-clickable {
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.student-exam-card-clickable:hover {
+  box-shadow: 0 4px 16px rgba(58, 29, 222, 0.18);
+  transform: translateY(-1px);
+}
+
+.student-exam-cta {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: #3a1dde;
+  font-weight: 600;
+}

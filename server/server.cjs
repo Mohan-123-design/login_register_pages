@@ -298,5 +298,9 @@ app.use(
   "/api/admin/live-sessions",
   require("./routes/livesessionroutes.cjs")(verifyToken, checkRole),
 );
+app.use(
+  "/api/exams",
+  require("./routes/examroutes.cjs")(verifyToken, checkRole),
+);
 server.listen(5000, function () {  console.log("Server is running on port 5000");
 });

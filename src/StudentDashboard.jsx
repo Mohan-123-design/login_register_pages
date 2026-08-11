@@ -23,10 +23,17 @@ function StudentDashboard() {
         <p>Student Dashboard</p>
       </header>
 
-      <div className="dashboard-content">
-        <StudentNotificationPanel userData={userData} />
-      </div>
-      <NotificationToast />
+<div className="dashboard-content">
+  <button
+    className="student-dash-exams-btn"
+    onClick={() => {
+      window.location.href = "/my-exams";
+    }}
+  >
+    My Exams
+  </button>
+  <StudentNotificationPanel userData={userData} />
+</div>      <NotificationToast />
     </div>
   );
 }

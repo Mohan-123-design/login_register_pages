@@ -1,0 +1,219 @@
+.student-assign-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.student-assign-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.student-assign-header h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.student-assign-subtitle {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+
+.student-assign-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.student-assign-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.student-assign-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+
+.student-assign-toast {
+  background-color: #e3f6e8;
+  color: #1c6b3a;
+  border: 1px solid #b9e6c4;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.student-assign-status-msg {
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.student-assign-error {
+  color: #b3261e;
+}
+
+.student-assign-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.student-assign-empty {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #888;
+}
+
+.student-assign-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(20, 20, 50, 0.06);
+}
+
+.student-assign-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.student-assign-card-top h3 {
+  margin: 0;
+  color: #1a1a2e;
+}
+
+.student-assign-status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.student-assign-status-draft {
+  background-color: #eceef3;
+  color: #555;
+}
+
+.student-assign-status-published {
+  background-color: #e1e8ff;
+  color: #2b3ea8;
+}
+
+.student-assign-status-open {
+  background-color: #e3f6e8;
+  color: #1c6b3a;
+}
+
+.student-assign-status-closed {
+  background-color: #ffe9d6;
+  color: #a15100;
+}
+
+.student-assign-status-completed {
+  background-color: #e6e1fb;
+  color: #4a2fb8;
+}
+
+.student-assign-meta {
+  color: #666;
+  font-size: 13px;
+  margin: 8px 0 4px 0;
+}
+
+.student-assign-overdue {
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.student-assign-desc {
+  color: #444;
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.student-assign-my-status {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3a1dde;
+  margin: 6px 0;
+}
+
+.student-assign-attachments {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.student-assign-attachments a {
+  color: #3a1dde;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.student-assign-attachments a:hover {
+  text-decoration: underline;
+}
+
+.student-assign-card-actions {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-assign-hint {
+  color: #888;
+  font-size: 13px;
+}
+
+.student-assign-instructions {
+  background: #f8f9fc;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.student-assign-instructions label {
+  font-weight: 600;
+  color: #444;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.student-assign-instructions p {
+  margin: 0;
+  color: #333;
+  white-space: pre-wrap;
+}
+.student-assign-question-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.student-assign-question-marks {
+  color: #888;
+  font-size: 12px;
+}

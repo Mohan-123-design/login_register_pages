@@ -10,7 +10,7 @@ function AdminDashboard() {
   var [recentActivity, setRecentActivity] = useState([]);
   var [isLoading, setIsLoading] = useState(true);
   var [errorMessage, setErrorMessage] = useState("");
-useEffect(() => {
+  useEffect(() => {
     var isFirstLoad = true;
 
     async function fetchDashboard() {
@@ -45,12 +45,13 @@ useEffect(() => {
         isFirstLoad = false;
       }
     }
-   fetchDashboard();
+    fetchDashboard();
     var intervalId = setInterval(fetchDashboard, 15000);
     return function () {
       clearInterval(intervalId);
     };
-  }, [navigate]);  if (loggedInUser === null) {
+  }, [navigate]);
+  if (loggedInUser === null) {
     window.location.href = "/access-denied";
     return null;
   }
@@ -75,7 +76,7 @@ useEffect(() => {
   }
 
   function formatDate(dateString) {
-  if (!dateString) return "-";
+    if (!dateString) return "-";
     var d = new Date(dateString);
     return d.toLocaleDateString() + " " + d.toLocaleTimeString();
   }
@@ -94,7 +95,12 @@ useEffect(() => {
 
   var chartMax = 1;
   if (stats) {
-    var values = [stats.totalStudents, stats.totalTrainers, stats.totalCourses, stats.totalBatches];
+    var values = [
+      stats.totalStudents,
+      stats.totalTrainers,
+      stats.totalCourses,
+      stats.totalBatches,
+    ];
     for (var i = 0; i < values.length; i++) {
       if (values[i] > chartMax) chartMax = values[i];
     }
@@ -114,9 +120,7 @@ useEffect(() => {
         </div>
       )}
       {!isLoading && errorMessage !== "" && (
-        <div className="admin-dash-status admin-dash-error">
-          {errorMessage}
-        </div>
+        <div className="admin-dash-status admin-dash-error">{errorMessage}</div>
       )}
       {!isLoading && errorMessage === "" && stats !== null && (
         <>
@@ -136,33 +140,66 @@ useEffect(() => {
           <div className="admin-dash-section">
             <h2>Quick Actions</h2>
             <div className="admin-dash-actions-row">
-              <button className="admin-dash-action-btn" onClick={() => goTo("/sessions")}>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/sessions")}
+              >
                 Manage Sessions
               </button>
-              <button className="admin-dash-action-btn" onClick={() => goTo("/attendance")}>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/attendance")}
+              >
                 Manage Attendance
               </button>
-              <button className="admin-dash-action-btn" onClick={() => goTo("/notifications")}>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/notifications")}
+              >
                 Send Notification
               </button>
-              <button className="admin-dash-action-btn" onClick={() => goTo("/recordings")}>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/recordings")}
+              >
                 View Recordings
               </button>
-              <button className="admin-dash-action-btn" onClick={() => goTo("/admin/users")}>
-  Manage Users
-</button>
-<button className="admin-dash-action-btn" onClick={() => goTo("/admin/courses")}>
-  Manage Courses
-</button>
-<button className="admin-dash-action-btn" onClick={() => goTo("/admin/batches")}>
-  Manage Batches
-</button>
-<button className="admin-dash-action-btn" onClick={() => goTo("/admin/live-sessions")}>
-  Live Session Monitoring
-</button>
-<button className="admin-dash-action-btn" onClick={() => goTo("/admin/exams")}>
-  Manage Exams
-</button>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/admin/users")}
+              >
+                Manage Users
+              </button>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/admin/courses")}
+              >
+                Manage Courses
+              </button>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/admin/batches")}
+              >
+                Manage Batches
+              </button>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/admin/live-sessions")}
+              >
+                Live Session Monitoring
+              </button>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/admin/exams")}
+              >
+                Manage Exams
+              </button>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/admin/assignments")}
+              >
+                Manage Assignments
+              </button>
             </div>
           </div>
           <div className="admin-dash-section">
@@ -170,10 +207,26 @@ useEffect(() => {
             <div className="admin-dash-chart-wrap">
               <svg viewBox="0 0 400 200" className="admin-dash-chart-svg">
                 {[
-                  { label: "Students", value: stats.totalStudents, color: "#3a1dde" },
-                  { label: "Trainers", value: stats.totalTrainers, color: "#2166c4" },
-                  { label: "Courses", value: stats.totalCourses, color: "#e65100" },
-                  { label: "Batches", value: stats.totalBatches, color: "#2e7d32" },
+                  {
+                    label: "Students",
+                    value: stats.totalStudents,
+                    color: "#3a1dde",
+                  },
+                  {
+                    label: "Trainers",
+                    value: stats.totalTrainers,
+                    color: "#2166c4",
+                  },
+                  {
+                    label: "Courses",
+                    value: stats.totalCourses,
+                    color: "#e65100",
+                  },
+                  {
+                    label: "Batches",
+                    value: stats.totalBatches,
+                    color: "#2e7d32",
+                  },
                 ].map(function (bar, index) {
                   var barHeight = (bar.value / chartMax) * 140;
                   var x = 40 + index * 90;
@@ -188,10 +241,21 @@ useEffect(() => {
                         fill={bar.color}
                         rx="4"
                       />
-                      <text x={x + 25} y="188" textAnchor="middle" fontSize="12">
+                      <text
+                        x={x + 25}
+                        y="188"
+                        textAnchor="middle"
+                        fontSize="12"
+                      >
                         {bar.label}
                       </text>
-                      <text x={x + 25} y={y - 6} textAnchor="middle" fontSize="12" fontWeight="bold">
+                      <text
+                        x={x + 25}
+                        y={y - 6}
+                        textAnchor="middle"
+                        fontSize="12"
+                        fontWeight="bold"
+                      >
                         {bar.value}
                       </text>
                     </g>
@@ -222,7 +286,7 @@ useEffect(() => {
                   return (
                     <tr key={activity._id}>
                       <td>{formatEventLabel(activity.eventType)}</td>
-                    <td>{activity.actorName}</td>
+                      <td>{activity.actorName}</td>
                       <td>{formatDate(activity.timestamp)}</td>
                     </tr>
                   );

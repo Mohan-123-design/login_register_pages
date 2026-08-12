@@ -1,0 +1,188 @@
+.assign-mgmt-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+.assign-mgmt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.assign-mgmt-header h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+.assign-mgmt-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.assign-mgmt-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.assign-mgmt-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.assign-mgmt-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+.assign-mgmt-btn-primary:hover {
+  background-color: #2b13b0;
+}
+.assign-mgmt-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+.assign-mgmt-btn-secondary:hover {
+  background-color: #f4f5f9;
+}
+.assign-mgmt-btn-text {
+  background: none;
+  color: #3a1dde;
+  padding: 10px 6px;
+}
+.assign-mgmt-toast {
+  background-color: #e3f6e8;
+  color: #1c6b3a;
+  border: 1px solid #b9e6c4;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.assign-mgmt-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.assign-mgmt-search-form {
+  display: flex;
+  gap: 8px;
+}
+.assign-mgmt-search-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d7dbe6;
+  min-width: 260px;
+  font-size: 14px;
+}
+.assign-mgmt-select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  background: #fff;
+}
+.assign-mgmt-status-msg {
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  background: #fff;
+}
+.assign-mgmt-error {
+  color: #b3261e;
+}
+.assign-mgmt-table-wrap {
+  background: #fff;
+  border-radius: 14px;
+  overflow-x: auto;
+  box-shadow: 0 2px 10px rgba(20, 20, 50, 0.06);
+}
+.assign-mgmt-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+.assign-mgmt-table th,
+.assign-mgmt-table td {
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef0f5;
+  font-size: 14px;
+}
+.assign-mgmt-table th {
+  color: #6a6f85;
+  font-weight: 600;
+  background-color: #f8f9fc;
+}
+.assign-mgmt-empty-row {
+  text-align: center;
+  color: #888;
+  padding: 24px;
+}
+.assign-mgmt-overdue-cell {
+  color: #b3261e;
+  font-weight: 600;
+}
+.assign-mgmt-status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+.assign-mgmt-status-draft {
+  background-color: #eceef3;
+  color: #555;
+}
+.assign-mgmt-status-published {
+  background-color: #e1e8ff;
+  color: #2b3ea8;
+}
+.assign-mgmt-status-open {
+  background-color: #e3f6e8;
+  color: #1c6b3a;
+}
+.assign-mgmt-status-closed {
+  background-color: #ffe9d6;
+  color: #a15100;
+}
+.assign-mgmt-status-completed {
+  background-color: #e6e1fb;
+  color: #4a2fb8;
+}
+.assign-mgmt-row-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.assign-mgmt-action-link {
+  background: none;
+  border: none;
+  color: #3a1dde;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+.assign-mgmt-action-link:hover {
+  text-decoration: underline;
+}
+.assign-mgmt-action-danger {
+  color: #b3261e;
+}
+.assign-mgmt-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+.assign-mgmt-page-info {
+  font-size: 14px;
+  color: #555;
+}

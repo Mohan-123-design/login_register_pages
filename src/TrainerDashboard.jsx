@@ -45,7 +45,7 @@ function TrainerDashboard() {
     setIsModalOpen(false);
   }
   function addNewSession(newSession) {
-    setSessionsList(prev => [newSession, ...prev]);
+    setSessionsList((prev) => [newSession, ...prev]);
   }
   function handleNotifyClick(roomId) {
     var updatedList = [];
@@ -101,32 +101,37 @@ function TrainerDashboard() {
     try {
       var token = localStorage.getItem("token");
       var userData = JSON.parse(localStorage.getItem("loggedInUser"));
-      
+
       var fetchPromise = fetch("http://localhost:5000/api/notifications", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
+          Authorization: "Bearer " + token,
         },
         body: JSON.stringify({
           title: "Session Started",
           message: "Trainer has started the live session for " + batchName,
           recipientType: "All",
           senderId: userData.email,
-          senderRole: userData.role
-        })
+          senderRole: userData.role,
+        }),
       });
 
-      var timeoutPromise = new Promise(function(resolve, reject) {
-        setTimeout(function() {
+      var timeoutPromise = new Promise(function (resolve, reject) {
+        setTimeout(function () {
           reject(new Error("Timeout"));
         }, 2000);
       });
-      
+
       var response = await Promise.race([fetchPromise, timeoutPromise]);
       if (response && !response.ok) {
         var errText = await response.text();
-        console.error("Failed to create notification. Status:", response.status, "Body:", errText);
+        console.error(
+          "Failed to create notification. Status:",
+          response.status,
+          "Body:",
+          errText,
+        );
       }
     } catch (error) {
       console.error("Failed to create notification:", error);
@@ -268,7 +273,8 @@ function TrainerDashboard() {
           <div
             className="nav-hub-card nav-hub-classroom"
             onClick={function () {
-              var activeSession = window.sessionStorage.getItem("activeSessionId") || "default";
+              var activeSession =
+                window.sessionStorage.getItem("activeSessionId") || "default";
               navigate("/live-classroom/" + activeSession);
             }}
           >
@@ -317,15 +323,27 @@ function TrainerDashboard() {
             <div className="nav-hub-desc">View attendance stats & reports</div>
           </div>
           <div
-  className="nav-hub-card nav-hub-sessions"
-  onClick={function () {
-    navigate("/admin/exams");
-  }}
->
-  <div className="nav-hub-icon">📝</div>
-  <div className="nav-hub-label">Exam Management</div>
-  <div className="nav-hub-desc">Create, publish & grade exams</div>
-</div>
+            className="nav-hub-card nav-hub-sessions"
+            onClick={function () {
+              navigate("/admin/exams");
+            }}
+          >
+            <div className="nav-hub-icon">📝</div>
+            <div className="nav-hub-label">Exam Management</div>
+            <div className="nav-hub-desc">Create, publish & grade exams</div>
+          </div>
+          <div
+            className="nav-hub-card nav-hub-sessions"
+            onClick={function () {
+              navigate("/admin/assignments");
+            }}
+          >
+            <div className="nav-hub-icon">📄</div>
+            <div className="nav-hub-label">Assignment Management</div>
+            <div className="nav-hub-desc">
+              Create, publish, grade & track assignments
+            </div>
+          </div>
         </div>
         <h2 className="section-heading">Upcoming Sessions</h2>
         {sessionsList.length === 0 ? (

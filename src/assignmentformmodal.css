@@ -1,0 +1,208 @@
+.assign-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 40, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+.assign-modal-box {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 12px 40px rgba(20, 20, 50, 0.25);
+}
+.assign-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eef0f5;
+}
+.assign-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #1a1a2e;
+}
+.assign-modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #888;
+  line-height: 1;
+}
+.assign-modal-form {
+  padding: 20px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+.assign-modal-error {
+  background-color: #fdecea;
+  color: #b3261e;
+  border: 1px solid #f7c7c2;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+.assign-modal-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.assign-modal-field {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.assign-modal-field label {
+  font-size: 13px;
+  color: #444;
+  font-weight: 600;
+}
+.assign-modal-field input,
+.assign-modal-field select,
+.assign-modal-field textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  font-family: inherit;
+}
+.assign-modal-hint-inline {
+  font-size: 12px;
+  color: #888;
+}
+.assign-modal-questions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+.assign-modal-questions-header h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #1a1a2e;
+}
+.assign-modal-hint {
+  font-size: 12px;
+  color: #888;
+}
+.assign-modal-attachment-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.assign-modal-attachment-row input {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 13px;
+}
+.assign-modal-remove-question {
+  background: none;
+  border: none;
+  color: #b3261e;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.assign-modal-add-question {
+  align-self: flex-start;
+  background: none;
+  border: 1px dashed #b7bcd4;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #3a1dde;
+  cursor: pointer;
+  font-size: 13px;
+}
+.assign-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+.assign-modal-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.assign-modal-btn-primary {
+  background-color: #3a1dde;
+  color: #fff;
+}
+.assign-modal-btn-primary:disabled {
+  background-color: #a79ef0;
+  cursor: not-allowed;
+}
+.assign-modal-btn-secondary {
+  background-color: #fff;
+  color: #1a1a2e;
+  border: 1px solid #d7dbe6;
+}
+.assign-modal-add-question-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  background-color: #3a1dde;
+  color: #fff;
+}
+
+.assign-modal-no-questions {
+  margin: 0 0 14px 0;
+}
+
+.assign-modal-question-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+  background-color: #f7f8fb;
+  border: 1px solid #e4e6ee;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.assign-modal-question-row textarea {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.assign-modal-question-row input {
+  width: 90px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe6;
+  font-size: 14px;
+}
+
+.assign-modal-remove-question {
+  background-color: #fdecea;
+  border: 1px solid #f3c6c1;
+  color: #c0392b;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}

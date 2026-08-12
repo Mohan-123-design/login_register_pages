@@ -302,5 +302,9 @@ app.use(
   "/api/exams",
   require("./routes/examroutes.cjs")(verifyToken, checkRole),
 );
+app.use(
+  "/api/assignments",
+  require("./routes/assignmentroutes.cjs")(verifyToken, checkRole),
+);
 server.listen(5000, function () {  console.log("Server is running on port 5000");
 });

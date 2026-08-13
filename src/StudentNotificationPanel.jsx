@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toastManager } from "./live-classroom/NotificationToast";
+import { API_BASE } from "./config";
 
 function StudentNotificationPanel(props) {
   var userData = props.userData;
@@ -14,8 +15,7 @@ function StudentNotificationPanel(props) {
     setErrorMsg("");
     var token = localStorage.getItem("token");
 
-    fetch("http://localhost:5000/api/notifications/my", {
-      headers: {
+fetch(API_BASE + "/api/notifications/my", {      headers: {
         Authorization: "Bearer " + token,
       },
     })
@@ -48,8 +48,7 @@ function StudentNotificationPanel(props) {
     if (e) e.stopPropagation();
 
     var token = localStorage.getItem("token");
-    fetch("http://localhost:5000/api/notifications/" + notif._id + "/read", {
-      method: "PUT",
+fetch(API_BASE + "/api/notifications/" + notif._id + "/read", {      method: "PUT",
       headers: {
         Authorization: "Bearer " + token,
       },

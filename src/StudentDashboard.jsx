@@ -32,10 +32,13 @@ function StudentDashboard() {
   >
     My Exams
   </button>
-  <button className="student-dash-exams-btn" onClick={() => { window.location.href = "/my-assignments"; }}>
+<button className="student-dash-exams-btn" onClick={() => { window.location.href = "/my-assignments"; }}>
      My Assignments
    </button>
-  <StudentNotificationPanel userData={userData} />
+  <button className="student-dash-exams-btn" onClick={() => { window.location.href = "/my-certificates"; }}>
+     My Certificates
+   </button>
+  <StudentNotificationPanel userData={userData} />  <StudentNotificationPanel userData={userData} />
 </div>      <NotificationToast />
     </div>
   );

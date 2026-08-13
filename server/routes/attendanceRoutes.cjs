@@ -2,8 +2,13 @@ var express = require("express");
 var router = express.Router();
 var attendanceController = require("../controllers/attendanceController.cjs");
 module.exports = function (verifyToken, checkRole) {
-  router.post(
-    "/mark",
+  router.get(
+    "/",
+    verifyToken,
+    checkRole(["Student", "Trainer", "Employee", "Admin"]),
+    attendanceController.getAttendanceRecords,
+  );
+  router.post(    "/mark",
     verifyToken,
     checkRole(["Student", "Trainer", "Employee", "Admin"]),
     attendanceController.markAttendance,

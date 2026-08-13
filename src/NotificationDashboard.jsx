@@ -5,6 +5,7 @@ import NotificationFilters from "./NotificationFilters";
 import NotificationList from "./NotificationList";
 import CreateNotificationModal from "./CreateNotificationModal";
 import NotificationToast from "./live-classroom/NotificationToast";
+import { API_BASE } from "./config";
 
 function NotificationDashboard() {
   var loggedInUser = localStorage.getItem("loggedInUser");
@@ -61,8 +62,7 @@ function NotificationDashboard() {
     if (filters.toDate !== "") queryParams.push("toDate=" + filters.toDate);
     if (filters.status !== "") queryParams.push("status=" + filters.status);
     var url =
-      "http://localhost:5000/api/notifications?" + queryParams.join("&");
-
+API_BASE + "/api/notifications?" + queryParams.join("&");
     fetch(url, {
       headers: { Authorization: "Bearer " + token },
     })

@@ -4,7 +4,7 @@ var Recording = require("../models/recording.cjs");
 var RecordingView = require("../models/recordingview.cjs");
 var Session = require("../models/Session.cjs");
 var User = mongoose.model("User"); 
-var JWT_SECRET = "aieducation-secret-key";
+var JWT_SECRET = require("../config.cjs").JWT_SECRET;
 var playback_token_seconds = 600; 
 
 var valid_statuses = [

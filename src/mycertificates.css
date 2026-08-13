@@ -1,0 +1,95 @@
+.my-cert-page {
+  min-height: 100vh;
+  background-color: #eef1f7;
+  font-family: "Segoe UI", "Poppins", Arial, sans-serif;
+  padding: 32px;
+}
+
+.my-cert-page h1 {
+  margin: 0 0 4px 0;
+  color: #1a1a2e;
+}
+
+.my-cert-subtitle {
+  color: #666;
+  margin: 0 0 20px 0;
+}
+
+.my-cert-error {
+  background: #fdeaea;
+  color: #c62828;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.my-cert-empty {
+  color: #888;
+}
+
+.my-cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.my-cert-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.my-cert-course {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0a3d62;
+  margin-bottom: 8px;
+}
+
+.my-cert-id {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.my-cert-dates {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.my-cert-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.my-cert-status-valid {
+  background: #e3f9e5;
+  color: #1a7f37;
+}
+
+.my-cert-status-revoked {
+  background: #fdeaea;
+  color: #c62828;
+}
+
+.my-cert-download-btn {
+  display: block;
+  width: 100%;
+  padding: 9px 0;
+  border: none;
+  border-radius: 8px;
+  background: #0a3d62;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.my-cert-download-btn:hover {
+  background: #0c4d7a;
+}

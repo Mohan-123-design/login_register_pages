@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./TrainerDashboard.css";
 import CreateSessionModal from "./CreateSessionModal";
+import { API_BASE } from "./config";
 
 function TrainerDashboard() {
   var navigate = useNavigate();
@@ -13,8 +14,7 @@ function TrainerDashboard() {
     async function fetchSessions() {
       try {
         var token = localStorage.getItem("token");
-        var response = await fetch("http://localhost:5000/api/sessions", {
-          headers: {
+var response = await fetch(API_BASE + "/api/sessions", {          headers: {
             Authorization: "Bearer " + token,
           },
         });
@@ -102,8 +102,7 @@ function TrainerDashboard() {
       var token = localStorage.getItem("token");
       var userData = JSON.parse(localStorage.getItem("loggedInUser"));
 
-      var fetchPromise = fetch("http://localhost:5000/api/notifications", {
-        method: "POST",
+var fetchPromise = fetch(API_BASE + "/api/notifications", {        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -332,7 +331,7 @@ function TrainerDashboard() {
             <div className="nav-hub-label">Exam Management</div>
             <div className="nav-hub-desc">Create, publish & grade exams</div>
           </div>
-          <div
+<div
             className="nav-hub-card nav-hub-sessions"
             onClick={function () {
               navigate("/admin/assignments");
@@ -344,8 +343,20 @@ function TrainerDashboard() {
               Create, publish, grade & track assignments
             </div>
           </div>
+          <div
+            className="nav-hub-card nav-hub-sessions"
+            onClick={function () {
+              navigate("/admin/certificates");
+            }}
+          >
+            <div className="nav-hub-icon">🏆</div>
+            <div className="nav-hub-label">Certificate Management</div>
+            <div className="nav-hub-desc">
+              View & download student certificates
+            </div>
+          </div>
         </div>
-        <h2 className="section-heading">Upcoming Sessions</h2>
+              <h2 className="section-heading">Upcoming Sessions</h2>
         {sessionsList.length === 0 ? (
           <div className="empty-state-box">
             <div className="empty-state-icon">📋</div>

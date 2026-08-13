@@ -26,6 +26,9 @@ import TakeExam from "./takeexam";
 import AssignmentManagement from "./assignmentmanagement";
 import AssignmentSubmissions from "./assignmentsubmissions";
 import StudentAssignments from "./studentassignments";
+import CertificateManagement from "./certificatemanagement";
+import MyCertificates from "./mycertificates";
+import CertificateVerify from "./certificateverify";
 
 function App() {
   return (
@@ -67,6 +70,9 @@ function App() {
           element={<AssignmentSubmissions />}
         />
         <Route path="/my-assignments" element={<StudentAssignments />} />
+        <Route path="/admin/certificates" element={<CertificateManagement />} />
+        <Route path="/my-certificates" element={<MyCertificates />} />
+        <Route path="/verify-certificate" element={<CertificateVerify />} />
       </Routes>
     </BrowserRouter>
   );

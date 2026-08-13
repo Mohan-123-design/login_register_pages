@@ -3,25 +3,36 @@ var http = require("http");
 var mongoose = require("mongoose");
 var cors = require("cors");
 var jwt = require("jsonwebtoken");
+var bcrypt = require("bcryptjs");
+var rateLimit = require("express-rate-limit");
+var config = require("./config.cjs");
 var attachSocket = require("./socket/index.cjs");
 var activityLogController = require("./controllers/activityLogController.cjs");
 var app = express();
 var server = http.createServer(app);
-var JWT_SECRET = "aieducation-secret-key";
+var JWT_SECRET = config.JWT_SECRET;
 
-app.use(cors());
+app.use(cors({ origin: config.CLIENT_ORIGIN, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
-mongoose.connect("mongodb://localhost:27017/aieducation");
+mongoose.connect(config.MONGO_URI);
 
 var db = mongoose.connection;
-db.on("error", function () {
-  console.log("MongoDB connection error");
+db.on("error", function (err) {
+  console.log("MongoDB connection error", err);
 });
 db.once("open", function () {
   console.log("Connected to MongoDB database");
 });
 
 var User = require("./models/user.cjs");
+
+var loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Too many login attempts. Please try again later." },
+});
 
 app.post("/api/register", function (req, res) {
   var firstName = req.body.firstName;
@@ -33,42 +44,73 @@ app.post("/api/register", function (req, res) {
     role = "Student";
   }
 
-  User.findOne({ email: email }).then(function (existingUser) {
-    if (existingUser) {
-      res.json({ success: false, message: "This email is already registered" });
-    } else {
-      var newUser = new User({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        role: role,
+  if (!firstName || !lastName || !email || !password) {
+    return res.json({
+      success: false,
+      message: "First name, last name, email and password are all required",
+    });
+  }
+  if (String(password).length < 6) {
+    return res.json({
+      success: false,
+      message: "Password must be at least 6 characters long",
+    });
+  }
+
+  User.findOne({ email: email })
+    .then(function (existingUser) {
+      if (existingUser) {
+        return res.json({ success: false, message: "This email is already registered" });
+      }
+      return bcrypt.hash(password, 10).then(function (hashedPassword) {
+        var newUser = new User({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: hashedPassword,
+          role: role,
+        });
+        return newUser.save().then(function () {
+          res.json({ success: true, message: "Registration successful" });
+        });
       });
-      newUser.save().then(function () {
-        res.json({ success: true, message: "Registration successful" });
-      });
-    }
-  });
+    })
+    .catch(function (err) {
+      console.error("Register error:", err);
+      res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
+    });
 });
 
-app.post("/api/login", function (req, res) {
+app.post("/api/login", loginLimiter, function (req, res) {
   var email = req.body.email;
   var password = req.body.password;
 
-  User.findOne({ email: email }).then(function (user) {
-    if (!user) {
-      res.json({
-        success: false,
-        message: "Email id or password is incorrect",
-      });
-    } else if (user.status === "Inactive") {
-      res.json({
-        success: false,
-        message: "Your account is inactive. Please contact the administrator.",
-      });
-    }
-     else {
-      if (user.password === password) {
+  if (!email || !password) {
+    return res.json({ success: false, message: "Email and password are required" });
+  }
+
+  User.findOne({ email: email })
+    .then(function (user) {
+      if (!user) {
+        return res.json({
+          success: false,
+          message: "Email id or password is incorrect",
+        });
+      }
+      if (user.status === "Inactive") {
+        return res.json({
+          success: false,
+          message: "Your account is inactive. Please contact the administrator.",
+        });
+      }
+
+      return bcrypt.compare(password, user.password).then(function (isMatch) {
+        if (!isMatch) {
+          return res.json({
+            success: false,
+            message: "Email id or password is incorrect",
+          });
+        }
         var tokenPayload = {
           email: user.email,
           role: user.role,
@@ -93,14 +135,12 @@ app.post("/api/login", function (req, res) {
             role: user.role,
           },
         });
-      } else {
-        res.json({
-          success: false,
-          message: "Email id or password is incorrect",
-        });
-      }
-    }
-  });
+      });
+    })
+    .catch(function (err) {
+      console.error("Login error:", err);
+      res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
+    });
 });
 
 app.post("/api/check-email", function (req, res) {
@@ -190,20 +230,25 @@ app.get(
   verifyToken,
   checkRole(["Trainer", "Admin"]),
   function (req, res) {
-    User.find({}).then(function (allUsers) {
-      var studentList = [];
-      for (var i = 0; i < allUsers.length; i++) {
-        if (allUsers[i].role === "Student" || allUsers[i].role === "Employee") {
-          studentList.push({
-            firstName: allUsers[i].firstName,
-            lastName: allUsers[i].lastName,
-            email: allUsers[i].email,
-            role: allUsers[i].role,
-          });
+    User.find({})
+      .then(function (allUsers) {
+        var studentList = [];
+        for (var i = 0; i < allUsers.length; i++) {
+          if (allUsers[i].role === "Student" || allUsers[i].role === "Employee") {
+            studentList.push({
+              firstName: allUsers[i].firstName,
+              lastName: allUsers[i].lastName,
+              email: allUsers[i].email,
+              role: allUsers[i].role,
+            });
+          }
         }
-      }
-      res.json({ success: true, students: studentList });
-    });
+        res.json({ success: true, students: studentList });
+      })
+      .catch(function (err) {
+        console.error("Get students error:", err);
+        res.status(500).json({ success: false, message: "Something went wrong." });
+      });
   },
 );
 app.get(
@@ -220,19 +265,33 @@ app.get(
       if (dateFilter) {
         query.date = dateFilter;
       }
-      Attendance.find(query).then(function (records) {
-        res.json({ success: true, records: records });
-      });
+      Attendance.find(query)
+        .then(function (records) {
+          res.json({ success: true, records: records });
+        })
+        .catch(function (err) {
+          console.error("Get attendance error:", err);
+          res.status(500).json({ success: false, message: "Something went wrong." });
+        });
     } else {
       var studentQuery = { studentEmail: userEmail };
       if (dateFilter) {
         studentQuery.date = dateFilter;
       }
-      Attendance.find(studentQuery).then(function (records) {
-        res.json({ success: true, records: records });
-      });
+      Attendance.find(studentQuery)
+        .then(function (records) {
+          res.json({ success: true, records: records });
+        })
+        .catch(function (err) {
+          console.error("Get attendance error:", err);
+          res.status(500).json({ success: false, message: "Something went wrong." });
+        });
     }
   },
+);
+app.use(
+  "/api/students",
+  require("./routes/studentroutes.cjs")(verifyToken, checkRole),
 );
 
 app.use(
@@ -306,5 +365,20 @@ app.use(
   "/api/assignments",
   require("./routes/assignmentroutes.cjs")(verifyToken, checkRole),
 );
-server.listen(5000, function () {  console.log("Server is running on port 5000");
+app.use(
+  "/api/certificates",
+  require("./routes/certificateroutes.cjs")(verifyToken, checkRole),
+);
+
+app.use(function (req, res) {
+  res.status(404).json({ success: false, message: "Route not found" });
+});
+// eslint-disable-next-line no-unused-vars
+app.use(function (err, req, res, next) {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ success: false, message: "Internal server error" });
+});
+
+server.listen(config.PORT, function () {
+  console.log("Server is running on port " + config.PORT);
 });

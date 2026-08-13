@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toastManager } from "./live-classroom/NotificationToast";
+import { API_BASE } from "./config";
 
 function EditNotificationModal(props) {
   var notification = props.notification;
@@ -33,8 +34,7 @@ function EditNotificationModal(props) {
       priority: priority,
     };
 
-    fetch("http://localhost:5000/api/notifications/" + notification._id, {
-      method: "PUT",
+fetch(API_BASE + "/api/notifications/" + notification._id, {      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,

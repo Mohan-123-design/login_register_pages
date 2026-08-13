@@ -106,11 +106,10 @@ async function getFeedbackBySession(req, res) {
       limit: limit,
       averagerating: analytics.averagerating,
       totalfeedback: analytics.totalFeedback,
-      ratingdistribution: analytics.ratingdistribution,
+ratingdistribution: analytics.ratingDistribution,
     });
   } catch (error) {
-    console.error("Error fetching session feedback:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Error fetching session feedback:", error);    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 }
 
@@ -145,10 +144,9 @@ async function getTrainerFeedback(req, res) {
       total: totalcount,
       page: page,
       limit: limit,
-      averageRating: analytics.averagerating,
-      totalFeedback: analytics.totalfeedback,
-      ratingDistribution: analytics.ratingdistribution,
-    });
+averageRating: analytics.averagerating,
+      totalFeedback: analytics.totalFeedback,
+      ratingDistribution: analytics.ratingDistribution,    });
   } catch (error) {
     console.error("Error fetching trainer feedback:", error);
     return res.status(500).json({ success: false, message: "Internal server error" });

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toastManager } from "./live-classroom/NotificationToast";
+import { API_BASE } from "./config";
 function CreateNotificationModal(props) {
   var onClose = props.onClose;
   var onCreated = props.onCreated;
@@ -51,8 +52,7 @@ function CreateNotificationModal(props) {
       payload.recipientId = conditionalValue;
     }
 
-    fetch("http://localhost:5000/api/notifications", {
-      method: "POST",
+fetch(API_BASE + "/api/notifications", {      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,

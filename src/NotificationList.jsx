@@ -1,6 +1,7 @@
 import { useState } from "react";
 import EditNotificationModal from "./EditNotificationModal";
 import { toastManager } from "./live-classroom/NotificationToast";
+import { API_BASE } from "./config";
 
 function NotificationList(props) {
   var notifications = props.notifications;
@@ -30,8 +31,7 @@ function NotificationList(props) {
     setDeleteError("");
     var token = localStorage.getItem("token");
     fetch(
-      "http://localhost:5000/api/notifications/" + notificationToDelete._id,
-      {
+API_BASE + "/api/notifications/" + notificationToDelete._id,      {
         method: "DELETE",
         headers: { Authorization: "Bearer " + token },
       },

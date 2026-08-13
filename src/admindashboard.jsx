@@ -194,13 +194,24 @@ function AdminDashboard() {
               >
                 Manage Exams
               </button>
-              <button
+<button
                 className="admin-dash-action-btn"
                 onClick={() => goTo("/admin/assignments")}
               >
                 Manage Assignments
               </button>
-            </div>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/admin/certificates")}
+              >
+                Manage Certificates
+              </button>
+              <button
+                className="admin-dash-action-btn"
+                onClick={() => goTo("/verify-certificate")}
+              >
+                Verify Certificate
+              </button>            </div>
           </div>
           <div className="admin-dash-section">
             <h2>Overview Chart</h2>

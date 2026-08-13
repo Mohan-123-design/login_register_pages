@@ -1,5 +1,6 @@
 var Attendance = require("../models/Attendance.cjs");
 var attendanceHelper = require("./attendanceHelper.cjs");
+var User = require("../models/user.cjs");
 function markAttendance(req, res) {
   var userId = req.body.userId;
   var sessionId = req.body.sessionId;
@@ -295,6 +296,61 @@ function getStudentReport(req, res) {
       });
     });
 }
+function getStudentsList(req, res) {
+  User.find({})
+    .then(function (allUsers) {
+      var studentList = [];
+      for (var i = 0; i < allUsers.length; i++) {
+        if (allUsers[i].role === "Student" || allUsers[i].role === "Employee") {
+          studentList.push({
+            firstName: allUsers[i].firstName,
+            lastName: allUsers[i].lastName,
+            email: allUsers[i].email,
+            role: allUsers[i].role,
+          });
+        }
+      }
+      res.json({ success: true, students: studentList });
+    })
+    .catch(function (err) {
+      console.log(err);
+      res.status(500).json({ success: false, message: "Error fetching students." });
+    });
+}
+
+function getAttendanceRecords(req, res) {
+  var userRole = req.user.role;
+  var userEmail = req.user.email;
+  var dateFilter = req.query.date;
+
+  if (userRole === "Trainer" || userRole === "Admin") {
+    var query = {};
+    if (dateFilter) {
+      query.date = dateFilter;
+    }
+    Attendance.find(query)
+      .then(function (records) {
+        res.json({ success: true, records: records });
+      })
+      .catch(function (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "Error fetching attendance records." });
+      });
+  } else {
+    var studentQuery = { studentEmail: userEmail };
+    if (dateFilter) {
+      studentQuery.date = dateFilter;
+    }
+    Attendance.find(studentQuery)
+      .then(function (records) {
+        res.json({ success: true, records: records });
+      })
+      .catch(function (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: "Error fetching attendance records." });
+      });
+  }
+}
 
 module.exports = {
   markAttendance: markAttendance,
@@ -302,5 +358,7 @@ module.exports = {
   getAttendanceByStudent: getAttendanceByStudent,
   updateAttendance: updateAttendance,
   getSessionReport: getSessionReport,
-  getStudentReport: getStudentReport,
+getStudentReport: getStudentReport,
+  getStudentsList: getStudentsList,
+  getAttendanceRecords: getAttendanceRecords,
 };

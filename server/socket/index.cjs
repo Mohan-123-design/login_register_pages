@@ -2,7 +2,7 @@ var jwt = require("jsonwebtoken");
 var roomState = require("./roomState.cjs");
 var activityLogController = require("../controllers/activityLogController.cjs");
 var chatController = require("../controllers/chatController.cjs");
-var JWT_SECRET = "aieducation-secret-key";
+var JWT_SECRET = require("../config.cjs").JWT_SECRET;
 function isHost(socket) {
   return socket.data.role === "Trainer" || socket.data.role === "Admin";
 }

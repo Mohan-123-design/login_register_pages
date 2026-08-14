@@ -28,8 +28,24 @@ function toAssignmentSummary(assignmentDoc) {
 }
 
 var assignmentController = {
-  getAllAssignments: async function (req, res) {
+  uploadFile: async function (req, res) {
     try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: "No file was uploaded." });
+      }
+      return res.status(200).json({
+        success: true,
+        message: "File uploaded successfully",
+        fileName: req.file.originalname,
+        fileUrl: "/api/uploads/assignments/" + req.file.filename,
+      });
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  },
+
+  getAllAssignments: async function (req, res) {    try {
       var search = req.query.search || "";
       var statusFilter = req.query.status || "";
       var courseId = req.query.courseId || "";
@@ -200,12 +216,14 @@ var assignmentController = {
       }
 
 var attachments = Array.isArray(req.body.attachments) ? req.body.attachments : [];
-      var questions = Array.isArray(req.body.questions)
-        ? req.body.questions
-            .filter(function (q) { return q && q.questionText && q.questionText.trim() !== ""; })
-            .map(function (q) {
-              var m = parseFloat(q.marks);
-              return { questionText: q.questionText.trim(), marks: isNaN(m) || m < 0 ? 0 : m };
+      var referenceLinks = Array.isArray(req.body.referenceLinks)
+        ? req.body.referenceLinks.filter(function (l) { return l && l.trim() !== ""; }).map(function (l) { return l.trim(); })
+        : [];
+      var topics = Array.isArray(req.body.topics)
+        ? req.body.topics
+            .filter(function (t) { return t && t.topicText && t.topicText.trim() !== ""; })
+            .map(function (t) {
+              return { topicText: t.topicText.trim(), description: t.description ? t.description.trim() : "" };
             })
         : [];      var newAssignment = new Assignment({
         title: title.trim(),
@@ -218,7 +236,8 @@ var attachments = Array.isArray(req.body.attachments) ? req.body.attachments : [
         totalMarks: totalMarks,
         dueDate: dueDate,
 attachments: attachments,
-        questions: questions,
+        referenceLinks: referenceLinks,
+        topics: topics,
                 latePenaltyPercent: latePenaltyPercent,
         status: "Draft",
         createdByEmail: req.user.email,
@@ -262,13 +281,17 @@ attachments: attachments,
 if (req.body.attachments !== undefined) {
         assignment.attachments = Array.isArray(req.body.attachments) ? req.body.attachments : [];
       }
-      if (req.body.questions !== undefined) {
-        assignment.questions = Array.isArray(req.body.questions)
-          ? req.body.questions
-              .filter(function (q) { return q && q.questionText && q.questionText.trim() !== ""; })
-              .map(function (q) {
-                var m = parseFloat(q.marks);
-                return { questionText: q.questionText.trim(), marks: isNaN(m) || m < 0 ? 0 : m };
+      if (req.body.referenceLinks !== undefined) {
+        assignment.referenceLinks = Array.isArray(req.body.referenceLinks)
+          ? req.body.referenceLinks.filter(function (l) { return l && l.trim() !== ""; }).map(function (l) { return l.trim(); })
+          : [];
+      }
+      if (req.body.topics !== undefined) {
+        assignment.topics = Array.isArray(req.body.topics)
+          ? req.body.topics
+              .filter(function (t) { return t && t.topicText && t.topicText.trim() !== ""; })
+              .map(function (t) {
+                return { topicText: t.topicText.trim(), description: t.description ? t.description.trim() : "" };
               })
           : [];
       }      if (req.body.latePenaltyPercent !== undefined) {
@@ -336,27 +359,31 @@ if (req.body.attachments !== undefined) {
       if (assignment.status !== "Draft") {
         return res.status(400).json({ success: false, message: "Only draft assignments can be published" });
       }
-      assignment.status = "Published";
+assignment.status = "Published";
       await assignment.save();
 
-      if (assignment.batchName) {
-        try {
-          await Notification.create({
-            title: "New Assignment: " + assignment.title,
-            message:
-              'A new assignment "' + assignment.title + '" has been posted. Due on ' +
-              new Date(assignment.dueDate).toLocaleString() + " (" + assignment.totalMarks + " marks).",
-            recipientType: "Batch",
-            batchName: assignment.batchName,
-            senderId: req.user.email,
-            senderRole: req.user.role,
-            priority: "High",
-          });
-        } catch (notifyError) {
-          console.error("Error creating assignment publish notification:", notifyError);
+      try {
+        var notificationPayload = {
+          title: "New Assignment: " + assignment.title,
+          message:
+            'A new assignment "' + assignment.title + '" has been posted. Due on ' +
+            new Date(assignment.dueDate).toLocaleString() + " (" + assignment.totalMarks + " marks).",
+          senderId: req.user.email,
+          senderRole: req.user.role,
+          priority: "High",
+        };
+        if (assignment.batchName) {
+          notificationPayload.recipientType = "Batch";
+          notificationPayload.batchName = assignment.batchName;
+        } else {
+          // No batch was selected for this assignment - fall back to notifying
+          // everyone instead of silently sending nothing.
+          notificationPayload.recipientType = "All";
         }
+        await Notification.create(notificationPayload);
+      } catch (notifyError) {
+        console.error("Error creating assignment publish notification:", notifyError);
       }
-
       return res
         .status(200)
         .json({ success: true, message: "Assignment published successfully", assignment: toAssignmentSummary(assignment) });
@@ -472,10 +499,13 @@ if (assignment.status !== "Open" && assignment.status !== "Published") {
 
       var answerText = req.body.answerText || "";
       var submittedFiles = Array.isArray(req.body.submittedFiles) ? req.body.submittedFiles : [];
-      if (answerText.trim() === "" && submittedFiles.length === 0) {
+      var referredLinks = Array.isArray(req.body.referredLinks)
+        ? req.body.referredLinks.filter(function (l) { return l && l.trim() !== ""; }).map(function (l) { return l.trim(); })
+        : [];
+      if (answerText.trim() === "" && submittedFiles.length === 0 && referredLinks.length === 0) {
         return res
           .status(400)
-          .json({ success: false, message: "Please provide an answer or attach at least one file before submitting." });
+          .json({ success: false, message: "Please provide an answer, upload a document, or add a referred link before submitting." });
       }
 
       var existing = await AssignmentSubmission.findOne({ assignmentId: assignment._id, studentEmail: req.user.email });
@@ -493,6 +523,7 @@ if (assignment.status !== "Open" && assignment.status !== "Published") {
         studentName: studentName.trim(),
         answerText: answerText,
         submittedFiles: submittedFiles,
+        referredLinks: referredLinks,
         submittedAt: now,
         isLate: isLate,
         submissionStatus: isLate ? "Late" : "Submitted",
@@ -536,6 +567,8 @@ if (assignment.status !== "Open" && assignment.status !== "Published") {
             percentage: 0,
             grade: "-",
             feedback: "",
+            submittedFiles: [],
+            referredLinks: [],
           },
         });
       }
@@ -727,6 +760,7 @@ function formatSubmissionRow(s, assignment) {
     feedback: s.feedback,
     answerText: s.answerText,
     submittedFiles: s.submittedFiles,
+    referredLinks: s.referredLinks,
     latePenaltyApplied: s.latePenaltyApplied,
     penaltyWaived: s.penaltyWaived,
   };

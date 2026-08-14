@@ -1,12 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { resolveFileUrl } from "./config";
 import "./assignmentformmodal.css";
 
-function blankAttachment() {
-  return { fileName: "", fileUrl: "" };
-}
-
-function blankQuestion() {
-  return { questionText: "", marks: "" };
+function blankTopic() {  return { topicText: "", description: "" };
 }
 
 function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
@@ -30,18 +26,25 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
         })
       : [],
   );
-  var [questions, setQuestions] = useState(
-    isEdit && assignment.questions && assignment.questions.length > 0
-      ? assignment.questions.map(function (q) {
-          return { questionText: q.questionText || "", marks: q.marks !== undefined && q.marks !== null ? String(q.marks) : "" };
+  var [topics, setTopics] = useState(
+    isEdit && assignment.topics && assignment.topics.length > 0
+      ? assignment.topics.map(function (t) {
+          return { topicText: t.topicText || "", description: t.description || "" };
         })
       : [],
   );
-  var [errorMessage, setErrorMessage] = useState("");
+  var [referenceLinks, setReferenceLinks] = useState(
+    isEdit && assignment.referenceLinks && assignment.referenceLinks.length > 0
+      ? assignment.referenceLinks.slice()
+      : [],
+  );
+var [errorMessage, setErrorMessage] = useState("");
   var [isSubmitting, setIsSubmitting] = useState(false);
+  var [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
+  var [attachmentUploadError, setAttachmentUploadError] = useState("");
+  var attachmentInputRef = useRef(null);
 
-  function getToken() {
-    return localStorage.getItem("token");
+  function getToken() {    return localStorage.getItem("token");
   }
 
   useEffect(function () {
@@ -72,31 +75,60 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
       });
   }, []);
 
-  function updateAttachment(index, field, value) {
-    setAttachments(function (prev) {
-      var next = prev.slice();
-      next[index] = Object.assign({}, next[index]);
-      next[index][field] = value;
-      return next;
-    });
+function handleChooseAttachmentClick() {
+    setAttachmentUploadError("");
+    if (attachmentInputRef.current) {
+      attachmentInputRef.current.click();
+    }
   }
 
-  function addAttachment() {
-    setAttachments(function (prev) {
-      return prev.concat([blankAttachment()]);
-    });
+  function handleAttachmentFileSelected(e) {
+    var pickedFile = e.target.files && e.target.files[0];
+    if (!pickedFile) return;
+    setAttachmentUploadError("");
+    setIsUploadingAttachment(true);
+
+    var formData = new FormData();
+    formData.append("file", pickedFile);
+
+    fetch("/api/assignments/upload-file", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + getToken() },
+      body: formData,
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.success) {
+          setAttachments(function (prev) {
+            return prev.concat([{ fileName: data.fileName, fileUrl: data.fileUrl }]);
+          });
+        } else {
+          setAttachmentUploadError(data.message || "Failed to upload file.");
+        }
+      })
+      .catch(function (error) {
+        console.error("Error uploading attachment:", error);
+        setAttachmentUploadError("Server or network error while uploading. Please try again.");
+      })
+      .finally(function () {
+        setIsUploadingAttachment(false);
+        if (attachmentInputRef.current) {
+          attachmentInputRef.current.value = "";
+        }
+      });
   }
 
-  function removeAttachment(index) {
-    setAttachments(function (prev) {
+  function removeAttachment(index) {    setAttachments(function (prev) {
       return prev.filter(function (_, i) {
         return i !== index;
       });
     });
   }
 
-  function updateQuestion(index, field, value) {
-    setQuestions(function (prev) {
+  function updateTopic(index, field, value) {
+    setTopics(function (prev) {
       var next = prev.slice();
       next[index] = Object.assign({}, next[index]);
       next[index][field] = value;
@@ -104,14 +136,36 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
     });
   }
 
-  function addQuestion() {
-    setQuestions(function (prev) {
-      return prev.concat([blankQuestion()]);
+  function addTopic() {
+    setTopics(function (prev) {
+      return prev.concat([blankTopic()]);
     });
   }
 
-  function removeQuestion(index) {
-    setQuestions(function (prev) {
+  function removeTopic(index) {
+    setTopics(function (prev) {
+      return prev.filter(function (_, i) {
+        return i !== index;
+      });
+    });
+  }
+
+  function updateReferenceLink(index, value) {
+    setReferenceLinks(function (prev) {
+      var next = prev.slice();
+      next[index] = value;
+      return next;
+    });
+  }
+
+  function addReferenceLink() {
+    setReferenceLinks(function (prev) {
+      return prev.concat([""]);
+    });
+  }
+
+  function removeReferenceLink(index) {
+    setReferenceLinks(function (prev) {
       return prev.filter(function (_, i) {
         return i !== index;
       });
@@ -144,15 +198,13 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
       }
     }
 
-    var cleanedQuestions = questions.filter(function (q) {
-      return q.questionText.trim() !== "";
+    var cleanedTopics = topics.filter(function (t) {
+      return t.topicText.trim() !== "";
     });
-    for (var j = 0; j < cleanedQuestions.length; j++) {
-      if (cleanedQuestions[j].marks === "" || isNaN(Number(cleanedQuestions[j].marks)) || Number(cleanedQuestions[j].marks) < 0) {
-        setErrorMessage("Question " + (j + 1) + " needs a valid, non-negative marks value");
-        return;
-      }
-    }
+
+    var cleanedReferenceLinks = referenceLinks
+      .map(function (l) { return l.trim(); })
+      .filter(function (l) { return l !== ""; });
 
     var payload = {
       title: title.trim(),
@@ -164,8 +216,9 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
       courseId: courseId || null,
       batchId: batchId || null,
       attachments: cleanedAttachments,
-      questions: cleanedQuestions.map(function (q) {
-        return { questionText: q.questionText.trim(), marks: Number(q.marks) };
+      referenceLinks: cleanedReferenceLinks,
+      topics: cleanedTopics.map(function (t) {
+        return { topicText: t.topicText.trim(), description: t.description ? t.description.trim() : "" };
       }),
     };
 
@@ -286,35 +339,36 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
           </div>
 
           <div className="assign-modal-questions-header">
-            <h3>Questions</h3>
-            <button type="button" className="assign-modal-add-question-btn" onClick={addQuestion}>
-              + Add Question
+            <h3>Research Topics</h3>
+            <button type="button" className="assign-modal-add-question-btn" onClick={addTopic}>
+              + Add Topic
             </button>
           </div>
 
-          {questions.length === 0 && (
+          {topics.length === 0 && (
             <p className="assign-modal-hint assign-modal-no-questions">
-              No questions added yet. Questions are optional — use them to break the assignment into gradable parts.
+              No topics added yet. Add one or more research topics for students to work on and submit findings for.
             </p>
           )}
 
-          {questions.map(function (q, index) {
+          {topics.map(function (t, index) {
             return (
               <div className="assign-modal-question-row" key={index}>
-                <textarea
-                  rows="2"
-                  placeholder={"Question " + (index + 1) + " text"}
-                  value={q.questionText}
-                  onChange={(e) => updateQuestion(index, "questionText", e.target.value)}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Marks"
-                  value={q.marks}
-                  onChange={(e) => updateQuestion(index, "marks", e.target.value)}
-                />
-                <button type="button" className="assign-modal-remove-question" onClick={() => removeQuestion(index)}>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <input
+                    type="text"
+                    placeholder={"Topic " + (index + 1) + " title"}
+                    value={t.topicText}
+                    onChange={(e) => updateTopic(index, "topicText", e.target.value)}
+                  />
+                  <textarea
+                    rows="2"
+                    placeholder="Topic details / guidance (optional)"
+                    value={t.description}
+                    onChange={(e) => updateTopic(index, "description", e.target.value)}
+                  />
+                </div>
+                <button type="button" className="assign-modal-remove-question" onClick={() => removeTopic(index)}>
                   Remove
                 </button>
               </div>
@@ -322,24 +376,31 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
           })}
 
           <div className="assign-modal-questions-header">
-            <h3>Attached Files / Links</h3>
+            <h3>Reference Materials (Files &amp; Links)</h3>
           </div>
+          <span className="assign-modal-hint">
+            Upload/attach reference documents students can use for their research
+          </span>
+
+<input
+            type="file"
+            ref={attachmentInputRef}
+            style={{ display: "none" }}
+            onChange={handleAttachmentFileSelected}
+          />
 
           {attachments.map(function (att, index) {
             return (
               <div className="assign-modal-attachment-row" key={index}>
-                <input
-                  type="text"
-                  placeholder="File name (e.g. Assignment1.pdf)"
-                  value={att.fileName}
-                  onChange={(e) => updateAttachment(index, "fileName", e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="File URL / link"
-                  value={att.fileUrl}
-                  onChange={(e) => updateAttachment(index, "fileUrl", e.target.value)}
-                />
+                <span className="assign-modal-uploaded-filename">📎 {att.fileName}</span>
+                <a
+                  className="assign-modal-view-link"
+                  href={resolveFileUrl(att.fileUrl)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View
+                </a>
                 <button type="button" className="assign-modal-remove-attachment" onClick={() => removeAttachment(index)}>
                   Remove
                 </button>
@@ -347,8 +408,49 @@ function AssignmentFormModal({ mode, assignment, onClose, onSaved }) {
             );
           })}
 
-          <button type="button" className="assign-modal-add-attachment" onClick={addAttachment}>
-            + Add Attachment
+          <button
+            type="button"
+            className="assign-modal-add-attachment"
+            onClick={handleChooseAttachmentClick}
+            disabled={isUploadingAttachment}
+          >
+            {isUploadingAttachment ? "Uploading..." : "+ Upload File"}
+          </button>
+          {attachmentUploadError !== "" && <div className="assign-modal-error">{attachmentUploadError}</div>}
+          <div className="assign-modal-questions-header">
+            <h3>Suggested Reference Links</h3>
+          </div>
+          <span className="assign-modal-hint">
+            Plain links (articles, papers, sites) students should refer to for this topic
+          </span>
+
+          {referenceLinks.map(function (link, index) {
+            return (
+              <div className="assign-modal-attachment-row" key={index}>
+                <input
+                  type="text"
+                  placeholder="https://example.com/article"
+                  value={link}
+                  onChange={(e) => updateReferenceLink(index, e.target.value)}
+                />
+                {link && link.trim() !== "" && (
+                  <a className="assign-modal-view-link" href={link} target="_blank" rel="noreferrer">
+                    View
+                  </a>
+                )}
+                <button
+                  type="button"
+                  className="assign-modal-remove-attachment"
+                  onClick={() => removeReferenceLink(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            );
+          })}
+
+          <button type="button" className="assign-modal-add-attachment" onClick={addReferenceLink}>
+            + Add Reference Link
           </button>
 
           <div className="assign-modal-actions">

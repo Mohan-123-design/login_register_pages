@@ -1,5 +1,6 @@
 var express = require("express");
 var http = require("http");
+var path = require("path");
 var mongoose = require("mongoose");
 var cors = require("cors");
 var jwt = require("jsonwebtoken");
@@ -14,6 +15,7 @@ var JWT_SECRET = config.JWT_SECRET;
 
 app.use(cors({ origin: config.CLIENT_ORIGIN, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
+app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
 mongoose.connect(config.MONGO_URI);
 
 var db = mongoose.connection;

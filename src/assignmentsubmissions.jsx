@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { resolveFileUrl } from "./config";
 import "./assignmentsubmissions.css";
 
 function AssignmentSubmissions() {
@@ -321,13 +322,31 @@ function AssignmentSubmissions() {
               )}
               {gradingRow.submittedFiles && gradingRow.submittedFiles.length > 0 && (
                 <div className="assign-sub-answer-preview">
-                  <label>Submitted Files</label>
+                  <label>Uploaded Topic Result Documents</label>
                   <ul>
-                    {gradingRow.submittedFiles.map(function (f, i) {
+{gradingRow.submittedFiles.map(function (f, i) {
                       return (
                         <li key={i}>
-                          <a href={f.fileUrl} target="_blank" rel="noreferrer">
+                          <a href={resolveFileUrl(f.fileUrl)} target="_blank" rel="noreferrer">
                             {f.fileName || f.fileUrl}
+                          </a>{" "}
+                          <a className="assign-sub-view-link" href={resolveFileUrl(f.fileUrl)} target="_blank" rel="noreferrer">
+                            (View)
+                          </a>
+                        </li>
+                      );
+                    })}                  </ul>
+                </div>
+              )}
+              {gradingRow.referredLinks && gradingRow.referredLinks.length > 0 && (
+                <div className="assign-sub-answer-preview">
+                  <label>Referred Links</label>
+                  <ul>
+                    {gradingRow.referredLinks.map(function (link, i) {
+                      return (
+                        <li key={i}>
+                          <a href={link} target="_blank" rel="noreferrer">
+                            {link}
                           </a>
                         </li>
                       );

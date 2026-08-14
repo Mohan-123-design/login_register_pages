@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { resolveFileUrl } from "./config";
 import "./studentassignments.css";
 
-function blankFile() {
-  return { fileName: "", fileUrl: "" };
+function blankLink() {
+  return "";
 }
-
 function StudentAssignments() {
   var loggedInUser = localStorage.getItem("loggedInUser");
   if (loggedInUser === null) {
@@ -25,9 +25,13 @@ function StudentAssignments() {
   var [actionMessage, setActionMessage] = useState("");
   var [activeAssignment, setActiveAssignment] = useState(null);
   var [answerText, setAnswerText] = useState("");
-  var [submittedFiles, setSubmittedFiles] = useState([]);
+var [submittedFiles, setSubmittedFiles] = useState([]);
+  var [referredLinks, setReferredLinks] = useState([]);
   var [submitError, setSubmitError] = useState("");
   var [isSubmitting, setIsSubmitting] = useState(false);
+  var [isUploadingFile, setIsUploadingFile] = useState(false);
+  var [uploadError, setUploadError] = useState("");
+  var fileInputRef = useRef(null);
 
   function getToken() {
     return localStorage.getItem("token");
@@ -97,33 +101,85 @@ function StudentAssignments() {
   }
 
   function openSubmitPanel(assignment) {
-    setActiveAssignment(assignment);
+setActiveAssignment(assignment);
     setAnswerText("");
     setSubmittedFiles([]);
+    setReferredLinks([]);
     setSubmitError("");
+    setUploadError("");
   }
-
   function closeSubmitPanel() {
     setActiveAssignment(null);
   }
 
-  function updateFile(index, field, value) {
-    setSubmittedFiles(function (prev) {
+function handleChooseFileClick() {
+    setUploadError("");
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }
+
+  function handleFileSelected(e) {
+    var pickedFile = e.target.files && e.target.files[0];
+    if (!pickedFile) return;
+    setUploadError("");
+    setIsUploadingFile(true);
+
+    var formData = new FormData();
+    formData.append("file", pickedFile);
+
+    fetch("/api/assignments/upload-file", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + getToken() },
+      body: formData,
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.success) {
+          setSubmittedFiles(function (prev) {
+            return prev.concat([{ fileName: data.fileName, fileUrl: data.fileUrl }]);
+          });
+        } else {
+          setUploadError(data.message || "Failed to upload file.");
+        }
+      })
+      .catch(function (error) {
+        console.error("Error uploading file:", error);
+        setUploadError("Server or network error while uploading. Please try again.");
+      })
+      .finally(function () {
+        setIsUploadingFile(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      });
+  }
+
+  function removeFile(index) {    setSubmittedFiles(function (prev) {
+      return prev.filter(function (_, i) {
+        return i !== index;
+      });
+    });
+  }
+
+  function updateLink(index, value) {
+    setReferredLinks(function (prev) {
       var next = prev.slice();
-      next[index] = Object.assign({}, next[index]);
-      next[index][field] = value;
+      next[index] = value;
       return next;
     });
   }
 
-  function addFile() {
-    setSubmittedFiles(function (prev) {
-      return prev.concat([blankFile()]);
+  function addLink() {
+    setReferredLinks(function (prev) {
+      return prev.concat([blankLink()]);
     });
   }
 
-  function removeFile(index) {
-    setSubmittedFiles(function (prev) {
+  function removeLink(index) {
+    setReferredLinks(function (prev) {
       return prev.filter(function (_, i) {
         return i !== index;
       });
@@ -145,8 +201,11 @@ function canSubmit(a) {
     var cleanedFiles = submittedFiles.filter(function (f) {
       return f.fileName.trim() !== "" || f.fileUrl.trim() !== "";
     });
-    if (answerText.trim() === "" && cleanedFiles.length === 0) {
-      setSubmitError("Please write an answer or attach at least one file.");
+    var cleanedLinks = referredLinks
+      .map(function (l) { return l.trim(); })
+      .filter(function (l) { return l !== ""; });
+    if (answerText.trim() === "" && cleanedFiles.length === 0 && cleanedLinks.length === 0) {
+      setSubmitError("Please write an answer, upload a result document, or add a referred link.");
       return;
     }
     setIsSubmitting(true);
@@ -157,7 +216,7 @@ function canSubmit(a) {
           "Content-Type": "application/json",
           Authorization: "Bearer " + getToken(),
         },
-        body: JSON.stringify({ answerText: answerText, submittedFiles: cleanedFiles }),
+        body: JSON.stringify({ answerText: answerText, submittedFiles: cleanedFiles, referredLinks: cleanedLinks }),
       });
       var data = await response.json();
       if (data.success) {
@@ -222,15 +281,40 @@ function canSubmit(a) {
                 {assignment.description && <p className="student-assign-desc">{assignment.description}</p>}
                 <p className="student-assign-my-status">Your status: {mySubmissionLabel(assignment)}</p>
 
-                {assignment.attachments && assignment.attachments.length > 0 && (
+                {assignment.topics && assignment.topics.length > 0 && (
+                  <div className="student-assign-field">
+                    <label>Research Topics</label>
+                    <ol className="student-assign-question-list">
+                      {assignment.topics.map(function (t, i) {
+                        return (
+                          <li key={i}>
+                            {t.topicText}
+                            {t.description ? " — " + t.description : ""}
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </div>
+                )}
+
+                {((assignment.attachments && assignment.attachments.length > 0) ||
+                  (assignment.referenceLinks && assignment.referenceLinks.length > 0)) && (
                   <div className="student-assign-attachments">
-                    {assignment.attachments.map(function (a, i) {
-                      return (
-                        <a key={i} href={a.fileUrl} target="_blank" rel="noreferrer">
-                          📎 {a.fileName || a.fileUrl}
-                        </a>
-                      );
-                    })}
+                    {assignment.attachments &&
+                      assignment.attachments.map(function (a, i) {
+                        return (
+<a key={"file-" + i} href={resolveFileUrl(a.fileUrl)} target="_blank" rel="noreferrer">                            📎 {a.fileName || a.fileUrl}
+                          </a>
+                        );
+                      })}
+                    {assignment.referenceLinks &&
+                      assignment.referenceLinks.map(function (link, i) {
+                        return (
+                          <a key={"link-" + i} href={link} target="_blank" rel="noreferrer">
+                            🔗 {link}
+                          </a>
+                        );
+                      })}
                   </div>
                 )}
 
@@ -278,14 +362,15 @@ function canSubmit(a) {
                   <p>{activeAssignment.instructions}</p>
                 </div>
               )}
-          {activeAssignment.questions && activeAssignment.questions.length > 0 && (
+          {activeAssignment.topics && activeAssignment.topics.length > 0 && (
             <div className="student-assign-field">
-              <label>Questions</label>
+              <label>Research Topics</label>
               <ol className="student-assign-question-list">
-                {activeAssignment.questions.map(function (q, i) {
+                {activeAssignment.topics.map(function (t, i) {
                   return (
                     <li key={i}>
-                      {q.questionText} <span className="student-assign-question-marks">({q.marks} marks)</span>
+                      {t.topicText}
+                      {t.description ? " — " + t.description : ""}
                     </li>
                   );
                 })}
@@ -293,43 +378,82 @@ function canSubmit(a) {
             </div>
           )}
               <div className="assign-modal-field">
-                <label>Your Answer</label>
+                <label>Your Answer / Summary</label>
                 <textarea
                   rows="5"
                   value={answerText}
                   onChange={(e) => setAnswerText(e.target.value)}
-                  placeholder="Type your answer here"
+                  placeholder="Summarize your findings here"
                 />
               </div>
 
-              <div className="assign-modal-questions-header">
-                <h3>Attach Files</h3>
-                <span className="assign-modal-hint">Add a file name and a link (URL) to your work</span>
+<div className="assign-modal-questions-header">
+                <h3>Upload Topic Result Documents</h3>
+                <span className="assign-modal-hint">Choose a file from your computer to attach it to your submission</span>
               </div>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileSelected}
+              />
 
               {submittedFiles.map(function (f, index) {
                 return (
                   <div className="assign-modal-attachment-row" key={index}>
-                    <input
-                      type="text"
-                      placeholder="File name"
-                      value={f.fileName}
-                      onChange={(e) => updateFile(index, "fileName", e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="File URL"
-                      value={f.fileUrl}
-                      onChange={(e) => updateFile(index, "fileUrl", e.target.value)}
-                    />
+                    <span className="assign-modal-uploaded-filename">📎 {f.fileName}</span>
+                    <a
+                      className="assign-modal-view-link"
+                      href={resolveFileUrl(f.fileUrl)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      View
+                    </a>
                     <button type="button" className="assign-modal-remove-question" onClick={() => removeFile(index)}>
                       Remove
                     </button>
                   </div>
                 );
+})}
+
+              <button
+                type="button"
+                className="assign-modal-add-question"
+                onClick={handleChooseFileClick}
+                disabled={isUploadingFile}
+              >
+                {isUploadingFile ? "Uploading..." : "+ Upload Document"}
+              </button>
+              {uploadError !== "" && <div className="assign-modal-error">{uploadError}</div>}
+              <div className="assign-modal-questions-header">
+                <h3>Referred Links</h3>
+                <span className="assign-modal-hint">Add links to sources you referred to for this topic</span>
+              </div>
+
+              {referredLinks.map(function (link, index) {
+                return (
+                  <div className="assign-modal-attachment-row" key={index}>
+                    <input
+                      type="text"
+                      placeholder="https://example.com/source"
+                      value={link}
+                      onChange={(e) => updateLink(index, e.target.value)}
+                    />
+                    {link && link.trim() !== "" && (
+                      <a className="assign-modal-view-link" href={link} target="_blank" rel="noreferrer">
+                        View
+                      </a>
+                    )}
+                    <button type="button" className="assign-modal-remove-question" onClick={() => removeLink(index)}>
+                      Remove
+                    </button>
+                  </div>
+                );
               })}
-              <button type="button" className="assign-modal-add-question" onClick={addFile}>
-                + Add File
+              <button type="button" className="assign-modal-add-question" onClick={addLink}>
+                + Add Referred Link
               </button>
 
               <div className="assign-modal-actions">

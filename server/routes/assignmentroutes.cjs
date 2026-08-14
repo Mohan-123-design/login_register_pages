@@ -1,11 +1,26 @@
 var express = require("express");
 var router = express.Router();
 var assignmentController = require("../controllers/assignmentcontroller.cjs");
+var upload = require("../middleware/upload.cjs");
+
+function handleUpload(req, res, next) {
+  upload.single("file")(req, res, function (err) {
+    if (err) {
+      return res.status(400).json({ success: false, message: err.message || "File upload failed." });
+    }
+    next();
+  });
+}
 
 module.exports = function (verifyToken, checkRole) {
   router.use(verifyToken);
-  router.get("/", checkRole(["Admin", "Trainer", "Student", "Employee"]), assignmentController.getAllAssignments);
-  router.get("/:id", checkRole(["Admin", "Trainer", "Student", "Employee"]), assignmentController.getAssignmentById);
+  router.post(
+    "/upload-file",
+    checkRole(["Admin", "Trainer", "Student", "Employee"]),
+    handleUpload,
+    assignmentController.uploadFile,
+  );
+  router.get("/", checkRole(["Admin", "Trainer", "Student", "Employee"]), assignmentController.getAllAssignments);  router.get("/:id", checkRole(["Admin", "Trainer", "Student", "Employee"]), assignmentController.getAssignmentById);
   router.post("/", checkRole(["Admin", "Trainer"]), assignmentController.createAssignment);
   router.put("/:id", checkRole(["Admin", "Trainer"]), assignmentController.updateAssignment);
   router.delete("/:id", checkRole(["Admin", "Trainer"]), assignmentController.deleteAssignment);

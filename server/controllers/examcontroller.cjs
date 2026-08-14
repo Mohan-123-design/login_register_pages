@@ -320,28 +320,30 @@ var examController = {
       if (!exam.questions || exam.questions.length === 0) {
         return res.status(400).json({ success: false, message: "Add at least one question before publishing" });
       }
-      exam.status = "Published";
+exam.status = "Published";
       await exam.save();
 
-      if (exam.batchName) {
-        try {
-          await Notification.create({
-            title: "New Exam: " + exam.title,
-            message:
-              "A new exam \"" + exam.title + "\" has been scheduled on " +
-              new Date(exam.examDate).toLocaleString() + " (" + exam.duration + " min, " +
-              exam.totalMarks + " marks). Check My Exams to take it.",
-            recipientType: "Batch",
-            batchName: exam.batchName,
-            senderId: req.user.email,
-            senderRole: req.user.role,
-            priority: "High",
-          });
-        } catch (notifyError) {
-          console.error("Error creating exam publish notification:", notifyError);
+      try {
+        var notificationPayload = {
+          title: "New Exam: " + exam.title,
+          message:
+            "A new exam \"" + exam.title + "\" has been scheduled on " +
+            new Date(exam.examDate).toLocaleString() + " (" + exam.duration + " min, " +
+            exam.totalMarks + " marks). Check My Exams to take it.",
+          senderId: req.user.email,
+          senderRole: req.user.role,
+          priority: "High",
+        };
+        if (exam.batchName) {
+          notificationPayload.recipientType = "Batch";
+          notificationPayload.batchName = exam.batchName;
+        } else {
+          notificationPayload.recipientType = "All";
         }
+        await Notification.create(notificationPayload);
+      } catch (notifyError) {
+        console.error("Error creating exam publish notification:", notifyError);
       }
-
       return res.status(200).json({ success: true, message: "Exam published. Students can now access it.", exam: toExamSummary(exam) });
     } catch (error) {
       console.error("Error publishing exam:", error);

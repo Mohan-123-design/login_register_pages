@@ -14,6 +14,7 @@ var assignmentSubmissionSchema = new mongoose.Schema(
     studentName: { type: String, default: "" },
     answerText: { type: String, default: "" },
     submittedFiles: { type: [submissionFileSchema], default: [] },
+    referredLinks: { type: [String], default: [] },
     submittedAt: { type: Date, default: null },
     isLate: { type: Boolean, default: false },
     submissionStatus: {

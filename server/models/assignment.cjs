@@ -7,10 +7,10 @@ var attachmentSchema = new mongoose.Schema(
   { _id: false },
 );
 
-var questionSchema = new mongoose.Schema(
+var topicSchema = new mongoose.Schema(
   {
-    questionText: { type: String, default: "" },
-    marks: { type: Number, default: 0 },
+    topicText: { type: String, default: "" },
+    description: { type: String, default: "" },
   },
   { _id: false },
 );
@@ -26,7 +26,8 @@ var assignmentSchema = new mongoose.Schema(
     totalMarks: { type: Number, required: true },
     dueDate: { type: Date, required: true },
 attachments: { type: [attachmentSchema], default: [] },
-    questions: { type: [questionSchema], default: [] },
+    referenceLinks: { type: [String], default: [] },
+    topics: { type: [topicSchema], default: [] },
         latePenaltyPercent: { type: Number, default: 0 },
     status: {
       type: String,

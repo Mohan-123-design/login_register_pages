@@ -228,6 +228,12 @@
   padding-left: 18px;
 }
 
+.assign-sub-view-link {
+  color: #3a1dde;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .assign-sub-late-note {
   background-color: #fff3cd;
   color: #8a6400;

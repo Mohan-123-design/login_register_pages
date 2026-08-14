@@ -3,11 +3,123 @@
   background-color: #eef1f7;
   font-family: "Segoe UI", "Poppins", Arial, sans-serif;
   padding: 32px;
+  position: relative;
+}
+
+.admin-dash-hamburger-btn {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 1200;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: none;
+  background-color: #3a1dde;
+  box-shadow: 0 4px 14px rgba(58, 29, 222, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-dash-hamburger-btn:hover {
+  background-color: #2b13b0;
+}
+
+.admin-dash-hamburger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.admin-dash-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 40, 0.45);
+  z-index: 1300;
+}
+
+.admin-dash-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 300px;
+  max-width: 85vw;
+  background-color: #ffffff;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+  transform: translateX(-100%);
+  transition: transform 0.28s ease;
+  z-index: 1400;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.admin-dash-sidebar-open {
+  transform: translateX(0);
+}
+
+.admin-dash-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px 20px;
+  border-bottom: 1px solid #eef0f5;
+}
+
+.admin-dash-sidebar-header h2 {
+  margin: 0;
+  font-size: 17px;
+  color: #1a1a2e;
+}
+
+.admin-dash-sidebar-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+}
+
+.admin-dash-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px 20px 12px;
+  gap: 6px;
+}
+
+.admin-dash-sidebar-link {
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #1a1a2e;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-dash-sidebar-link:hover {
+  background-color: #eef0ff;
+  color: #3a1dde;
 }
 
 .admin-dash-header h1 {
   margin: 0 0 4px 0;
   color: #1a1a2e;
+}
+
+.admin-dash-header {
+  margin-left: 62px;
 }
 
 .admin-dash-welcome {
@@ -141,5 +253,15 @@
   }
   .admin-dash-table {
     font-size: 12px;
+  }
+  .admin-dash-hamburger-btn {
+    top: 16px;
+    left: 16px;
+  }
+  .admin-dash-header {
+    margin-left: 54px;
+  }
+  .admin-dash-sidebar {
+    width: 260px;
   }
 }

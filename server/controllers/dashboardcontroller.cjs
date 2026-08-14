@@ -64,7 +64,7 @@ var dashboardController = {
       var totalExams = await Exam.countDocuments({});
       var totalCertificates = await Certificate.countDocuments({});
       var pendingAssignments = await Assignment.countDocuments({
-        status: "Pending",
+        status: { $in: ["Published", "Open"] },
       });
 
       var recentActivity = await ActivityLog.find({

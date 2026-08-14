@@ -10,6 +10,7 @@ function AdminDashboard() {
   var [recentActivity, setRecentActivity] = useState([]);
   var [isLoading, setIsLoading] = useState(true);
   var [errorMessage, setErrorMessage] = useState("");
+  var [isSidebarOpen, setIsSidebarOpen] = useState(false);
   useEffect(() => {
     var isFirstLoad = true;
 
@@ -62,8 +63,34 @@ function AdminDashboard() {
   }
 
   function goTo(path) {
+    setIsSidebarOpen(false);
     navigate(path);
   }
+
+  function toggleSidebar() {
+    setIsSidebarOpen(function (prev) {
+      return !prev;
+    });
+  }
+
+  function closeSidebar() {
+    setIsSidebarOpen(false);
+  }
+
+  var quickActions = [
+    { label: "Manage Sessions", path: "/sessions" },
+    { label: "Manage Attendance", path: "/attendance" },
+    { label: "Send Notification", path: "/notifications" },
+    { label: "View Recordings", path: "/recordings" },
+    { label: "Manage Users", path: "/admin/users" },
+    { label: "Manage Courses", path: "/admin/courses" },
+    { label: "Manage Batches", path: "/admin/batches" },
+    { label: "Live Session Monitoring", path: "/admin/live-sessions" },
+    { label: "Manage Exams", path: "/admin/exams" },
+    { label: "Manage Assignments", path: "/admin/assignments" },
+    { label: "Manage Certificates", path: "/admin/certificates" },
+    { label: "Verify Certificate", path: "/verify-certificate" },
+  ];
 
   function formatEventLabel(eventType) {
     var labels = {
@@ -108,6 +135,41 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dash-page">
+      <button
+        className="admin-dash-hamburger-btn"
+        onClick={toggleSidebar}
+        aria-label="Open quick actions menu"
+        aria-expanded={isSidebarOpen}
+      >
+        <span className="admin-dash-hamburger-line"></span>
+        <span className="admin-dash-hamburger-line"></span>
+        <span className="admin-dash-hamburger-line"></span>
+      </button>
+
+      {isSidebarOpen && <div className="admin-dash-sidebar-overlay" onClick={closeSidebar}></div>}
+
+      <div className={"admin-dash-sidebar" + (isSidebarOpen ? " admin-dash-sidebar-open" : "")}>
+        <div className="admin-dash-sidebar-header">
+          <h2>Quick Actions</h2>
+          <button className="admin-dash-sidebar-close" onClick={closeSidebar} aria-label="Close menu">
+            ×
+          </button>
+        </div>
+        <nav className="admin-dash-sidebar-nav">
+          {quickActions.map(function (action) {
+            return (
+              <button
+                key={action.path}
+                className="admin-dash-sidebar-link"
+                onClick={() => goTo(action.path)}
+              >
+                {action.label}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
       <div className="admin-dash-header">
         <h1>Admin Dashboard</h1>
         <p className="admin-dash-welcome">
@@ -136,82 +198,6 @@ function AdminDashboard() {
                 </div>
               );
             })}
-          </div>
-          <div className="admin-dash-section">
-            <h2>Quick Actions</h2>
-            <div className="admin-dash-actions-row">
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/sessions")}
-              >
-                Manage Sessions
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/attendance")}
-              >
-                Manage Attendance
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/notifications")}
-              >
-                Send Notification
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/recordings")}
-              >
-                View Recordings
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/admin/users")}
-              >
-                Manage Users
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/admin/courses")}
-              >
-                Manage Courses
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/admin/batches")}
-              >
-                Manage Batches
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/admin/live-sessions")}
-              >
-                Live Session Monitoring
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/admin/exams")}
-              >
-                Manage Exams
-              </button>
-<button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/admin/assignments")}
-              >
-                Manage Assignments
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/admin/certificates")}
-              >
-                Manage Certificates
-              </button>
-              <button
-                className="admin-dash-action-btn"
-                onClick={() => goTo("/verify-certificate")}
-              >
-                Verify Certificate
-              </button>            </div>
           </div>
           <div className="admin-dash-section">
             <h2>Overview Chart</h2>

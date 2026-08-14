@@ -1,6 +1,8 @@
 var Batch = require("../models/batch.cjs");
 var User = require("../models/user.cjs");
 var Course = require("../models/course.cjs");
+var Assignment = require("../models/assignment.cjs");
+var Exam = require("../models/exam.cjs");
 
 function toStudentSummary(batch) {
   var obj = batch.toObject ? batch.toObject() : batch;
@@ -198,12 +200,13 @@ var batchController = {
     }
   },
 
-  updateBatch: async function (req, res) {
+updateBatch: async function (req, res) {
     try {
       var batch = await Batch.findById(req.params.id);
       if (!batch) {
         return res.status(404).json({ success: false, message: "Batch not found" });
       }
+      var previousBatchName = batch.name;
       if (req.body.name !== undefined) {
         if (req.body.name.trim() === "") {
           return res.status(400).json({ success: false, message: "Batch name cannot be empty" });
@@ -265,13 +268,30 @@ var batchController = {
         }
       }
       await batch.save();
+
+      if (previousBatchName !== batch.name) {
+        var allocatedEmails = batch.students.map(function (s) {
+          return s.studentEmail;
+        });
+        if (allocatedEmails.length > 0) {
+          await User.updateMany(
+            { email: { $in: allocatedEmails }, batch: previousBatchName },
+            { $set: { batch: batch.name } },
+          );
+        }
+        // Keep already-created assignments/exams in sync too, since their
+        // notifications were sent using a snapshot of the batch name.
+        await Assignment.updateMany({ batchId: batch._id }, { $set: { batchName: batch.name } });
+        await Exam.updateMany({ batchId: batch._id }, { $set: { batchName: batch.name } });
+      }
+
       return res.status(200).json({ success: true, message: "Batch updated successfully", batch: batch });
     } catch (error) {
       console.error("Error updating batch:", error);
       return res.status(500).json({ success: false, message: "Internal server error" });
     }
   },
-
+  
   assignTrainer: async function (req, res) {
     try {
       var trainerEmail = req.body.trainerEmail;
@@ -303,165 +323,165 @@ var batchController = {
     }
   },
 
-  updateStatus: async function (req, res) {
-    try {
-      var newStatus = req.body.status;
-      var allowedStatuses = ["Upcoming", "Active", "Completed", "Archived"];
-      if (allowedStatuses.indexOf(newStatus) === -1) {
-        return res.status(400).json({ success: false, message: "status must be one of: " + allowedStatuses.join(", ") });
-      }
-      var batch = await Batch.findById(req.params.id);
-      if (!batch) {
-        return res.status(404).json({ success: false, message: "Batch not found" });
-      }
-      batch.status = newStatus;
-      await batch.save();
-      return res.status(200).json({
-        success: true,
-        message: "Batch status updated to " + newStatus,
-        batch: batch,
-      });
-    } catch (error) {
-      console.error("Error updating batch status:", error);
-      return res.status(500).json({ success: false, message: "Internal server error" });
+updateStatus: async function (req, res) {
+  try {
+    var newStatus = req.body.status;
+    var allowedStatuses = ["Upcoming", "Active", "Completed", "Archived"];
+    if (allowedStatuses.indexOf(newStatus) === -1) {
+      return res.status(400).json({ success: false, message: "status must be one of: " + allowedStatuses.join(", ") });
     }
-  },
+    var batch = await Batch.findById(req.params.id);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: "Batch not found" });
+    }
+    batch.status = newStatus;
+    await batch.save();
+    return res.status(200).json({
+      success: true,
+      message: "Batch status updated to " + newStatus,
+      batch: batch,
+    });
+  } catch (error) {
+    console.error("Error updating batch status:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+},
 
-  getAvailableStudents: async function (req, res) {
-    try {
-      var batch = await Batch.findById(req.params.id);
-      if (!batch) {
-        return res.status(404).json({ success: false, message: "Batch not found" });
-      }
-      var search = req.query.search || "";
-      var allocatedEmails = batch.students.map(function (s) {
-        return s.studentEmail;
-      });
-      var query = {
-        role: { $in: ["Student", "Employee"] },
-        email: { $nin: allocatedEmails },
-      };
-      if (search.trim() !== "") {
-        var regex = new RegExp(search.trim(), "i");
-        query.$or = [{ firstName: regex }, { lastName: regex }, { email: regex }];
-      }
-      var availableStudents = await User.find(query)
-        .select("firstName lastName email batch status")
-        .limit(200);
-      return res.status(200).json({ success: true, students: availableStudents });
-    } catch (error) {
-      console.error("Error fetching available students:", error);
-      return res.status(500).json({ success: false, message: "Internal server error" });
+getAvailableStudents: async function (req, res) {
+  try {
+    var batch = await Batch.findById(req.params.id);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: "Batch not found" });
     }
-  },
+    var search = req.query.search || "";
+    var allocatedEmails = batch.students.map(function (s) {
+      return s.studentEmail;
+    });
+    var query = {
+      role: { $in: ["Student", "Employee"] },
+      email: { $nin: allocatedEmails },
+    };
+    if (search.trim() !== "") {
+      var regex = new RegExp(search.trim(), "i");
+      query.$or = [{ firstName: regex }, { lastName: regex }, { email: regex }];
+    }
+    var availableStudents = await User.find(query)
+      .select("firstName lastName email batch status")
+      .limit(200);
+    return res.status(200).json({ success: true, students: availableStudents });
+  } catch (error) {
+    console.error("Error fetching available students:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+},
 
-  allocateStudents: async function (req, res) {
-    try {
-      var studentEmails = req.body.studentEmails;
-      if (!Array.isArray(studentEmails) || studentEmails.length === 0) {
-        return res.status(400).json({ success: false, message: "studentEmails must be a non-empty array" });
-      }
-      var batch = await Batch.findById(req.params.id);
-      if (!batch) {
-        return res.status(404).json({ success: false, message: "Batch not found" });
-      }
-      var existingEmails = batch.students.map(function (s) {
-        return s.studentEmail;
-      });
-      var newEmails = [];
-      for (var i = 0; i < studentEmails.length; i++) {
-        if (existingEmails.indexOf(studentEmails[i]) === -1 && newEmails.indexOf(studentEmails[i]) === -1) {
-          newEmails.push(studentEmails[i]);
-        }
-      }
-      if (newEmails.length === 0) {
-        return res.status(400).json({ success: false, message: "Selected students are already allocated to this batch" });
-      }
-      if (batch.capacity > 0 && batch.students.length + newEmails.length > batch.capacity) {
-        var seatsLeft = batch.capacity - batch.students.length;
-        return res.status(400).json({
-          success: false,
-          message: "Not enough seats available. Only " + Math.max(seatsLeft, 0) + " seat(s) remaining in this batch.",
-        });
-      }
-      var studentDocs = await User.find({
-        email: { $in: newEmails },
-        role: { $in: ["Student", "Employee"] },
-      });
-      if (studentDocs.length !== newEmails.length) {
-        return res.status(400).json({ success: false, message: "One or more selected students were not found" });
-      }
-      for (var j = 0; j < studentDocs.length; j++) {
-        var studentDoc = studentDocs[j];
-        batch.students.push({
-          studentEmail: studentDoc.email,
-          studentName: studentDoc.firstName + " " + studentDoc.lastName,
-          allocatedAt: new Date(),
-        });
-        studentDoc.batch = batch.name;
-        await studentDoc.save();
-      }
-      await batch.save();
-      return res.status(200).json({
-        success: true,
-        message: studentDocs.length + " student(s) allocated to batch successfully",
-        batch: batch,
-      });
-    } catch (error) {
-      console.error("Error allocating students:", error);
-      return res.status(500).json({ success: false, message: "Internal server error" });
+allocateStudents: async function (req, res) {
+  try {
+    var studentEmails = req.body.studentEmails;
+    if (!Array.isArray(studentEmails) || studentEmails.length === 0) {
+      return res.status(400).json({ success: false, message: "studentEmails must be a non-empty array" });
     }
-  },
+    var batch = await Batch.findById(req.params.id);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: "Batch not found" });
+    }
+    var existingEmails = batch.students.map(function (s) {
+      return s.studentEmail;
+    });
+    var newEmails = [];
+    for (var i = 0; i < studentEmails.length; i++) {
+      if (existingEmails.indexOf(studentEmails[i]) === -1 && newEmails.indexOf(studentEmails[i]) === -1) {
+        newEmails.push(studentEmails[i]);
+      }
+    }
+    if (newEmails.length === 0) {
+      return res.status(400).json({ success: false, message: "Selected students are already allocated to this batch" });
+    }
+    if (batch.capacity > 0 && batch.students.length + newEmails.length > batch.capacity) {
+      var seatsLeft = batch.capacity - batch.students.length;
+      return res.status(400).json({
+        success: false,
+        message: "Not enough seats available. Only " + Math.max(seatsLeft, 0) + " seat(s) remaining in this batch.",
+      });
+    }
+    var studentDocs = await User.find({
+      email: { $in: newEmails },
+      role: { $in: ["Student", "Employee"] },
+    });
+    if (studentDocs.length !== newEmails.length) {
+      return res.status(400).json({ success: false, message: "One or more selected students were not found" });
+    }
+    for (var j = 0; j < studentDocs.length; j++) {
+      var studentDoc = studentDocs[j];
+      batch.students.push({
+        studentEmail: studentDoc.email,
+        studentName: studentDoc.firstName + " " + studentDoc.lastName,
+        allocatedAt: new Date(),
+      });
+      studentDoc.batch = batch.name;
+      await studentDoc.save();
+    }
+    await batch.save();
+    return res.status(200).json({
+      success: true,
+      message: studentDocs.length + " student(s) allocated to batch successfully",
+      batch: batch,
+    });
+  } catch (error) {
+    console.error("Error allocating students:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+},
 
-  removeStudent: async function (req, res) {
-    try {
-      var batch = await Batch.findById(req.params.id);
-      if (!batch) {
-        return res.status(404).json({ success: false, message: "Batch not found" });
-      }
-      var studentEmail = decodeURIComponent(req.params.email);
-      var originalLength = batch.students.length;
-      batch.students = batch.students.filter(function (s) {
-        return s.studentEmail !== studentEmail;
-      });
-      if (batch.students.length === originalLength) {
-        return res.status(404).json({ success: false, message: "Student not found in this batch" });
-      }
-      await batch.save();
-      var studentDoc = await User.findOne({ email: studentEmail });
-      if (studentDoc && studentDoc.batch === batch.name) {
-        studentDoc.batch = "";
-        await studentDoc.save();
-      }
-      return res.status(200).json({ success: true, message: "Student removed from batch successfully", batch: batch });
-    } catch (error) {
-      console.error("Error removing student from batch:", error);
-      return res.status(500).json({ success: false, message: "Internal server error" });
+removeStudent: async function (req, res) {
+  try {
+    var batch = await Batch.findById(req.params.id);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: "Batch not found" });
     }
-  },
+    var studentEmail = decodeURIComponent(req.params.email);
+    var originalLength = batch.students.length;
+    batch.students = batch.students.filter(function (s) {
+      return s.studentEmail !== studentEmail;
+    });
+    if (batch.students.length === originalLength) {
+      return res.status(404).json({ success: false, message: "Student not found in this batch" });
+    }
+    await batch.save();
+    var studentDoc = await User.findOne({ email: studentEmail });
+    if (studentDoc && studentDoc.batch === batch.name) {
+      studentDoc.batch = "";
+      await studentDoc.save();
+    }
+    return res.status(200).json({ success: true, message: "Student removed from batch successfully", batch: batch });
+  } catch (error) {
+    console.error("Error removing student from batch:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+},
 
-  deleteBatch: async function (req, res) {
-    try {
-      var batch = await Batch.findById(req.params.id);
-      if (!batch) {
-        return res.status(404).json({ success: false, message: "Batch not found" });
-      }
-      var allocatedEmails = batch.students.map(function (s) {
-        return s.studentEmail;
-      });
-      if (allocatedEmails.length > 0) {
-        await User.updateMany(
-          { email: { $in: allocatedEmails }, batch: batch.name },
-          { $set: { batch: "" } },
-        );
-      }
-      await Batch.findByIdAndDelete(req.params.id);
-      return res.status(200).json({ success: true, message: "Batch deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting batch:", error);
-      return res.status(500).json({ success: false, message: "Internal server error" });
+deleteBatch: async function (req, res) {
+  try {
+    var batch = await Batch.findById(req.params.id);
+    if (!batch) {
+      return res.status(404).json({ success: false, message: "Batch not found" });
     }
-  },
+    var allocatedEmails = batch.students.map(function (s) {
+      return s.studentEmail;
+    });
+    if (allocatedEmails.length > 0) {
+      await User.updateMany(
+        { email: { $in: allocatedEmails }, batch: batch.name },
+        { $set: { batch: "" } },
+      );
+    }
+    await Batch.findByIdAndDelete(req.params.id);
+    return res.status(200).json({ success: true, message: "Batch deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting batch:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+},
 };
 
 module.exports = batchController;
